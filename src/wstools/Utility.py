@@ -216,6 +216,8 @@ class DOM:
        also provides some basic abstractions so that the rest of the
        package need not care about actual DOM implementation in use."""
 
+    looseNamespaces = False # if can't find a referenced namespace, try the default one
+    
     # Namespace stuff related to the SOAP specification.
 
     NS_SOAP_ENV_1_1 = 'http://schemas.xmlsoap.org/soap/envelope/'
@@ -532,6 +534,7 @@ class DOM:
         attrkey = (self.NS_XMLNS, prefix)
         DOCUMENT_NODE = node.DOCUMENT_NODE
         ELEMENT_NODE = node.ELEMENT_NODE
+        orig_node = node
         while 1:
             if node is None:
                 raise DOMException('Value for prefix %s not found.' % prefix)
@@ -545,7 +548,10 @@ class DOM:
                 raise DOMException('Value for prefix %s not found.' % prefix)
             node = node.parentNode
             if node.nodeType == DOCUMENT_NODE:
-                raise DOMException('Value for prefix %s not found.' % prefix)
+                if DOM.looseNamespaces:
+                    return self.findTargetNS(orig_node)
+                else:
+                    raise DOMException('Value for prefix %s not found.' % prefix)
 
     def findDefaultNS(self, node):
         """Return the current default namespace uri for the given node."""
