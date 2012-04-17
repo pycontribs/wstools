@@ -1214,8 +1214,8 @@ class XMLSchema(XMLSchemaComponent):
                     except NoSchemaLocationWarning, ex:
                         # Dependency declaration, hopefully implementation
                         # is aware of this namespace (eg. SOAP,WSDL,?)
-                        print "IMPORT: ", import_ns
-                        print ex
+                        #print "IMPORT: ", import_ns
+                        #print ex
                         del slocd[import_ns]
                         continue
                     except SchemaError, ex:
