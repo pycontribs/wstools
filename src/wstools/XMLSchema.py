@@ -3095,17 +3095,16 @@ else:
 class TypeDescriptionComponent(tupleClass):
     """Tuple of length 2, consisting of
        a namespace and unprefixed name.
-    """
-    def __init__(self, args):
+    """    
+    def __new__(typ, args):
         """args -- (namespace, name)
            Remove the name's prefix, irrelevant.
         """
         if len(args) != 2:
             raise TypeError, 'expecting tuple (namespace, name), got %s' %args
         elif args[1].find(':') >= 0:
-            args = (args[0], SplitQName(args[1])[1])
-        tuple.__init__(self, args)
-        return
+            args = (args[0], SplitQName(args[1])[1])        
+        return tuple.__new__(typ, args)
 
     def getTargetNamespace(self):
         return self[0]
