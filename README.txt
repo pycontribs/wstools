@@ -1,3 +1,9 @@
+General
+========
+- Homepage:	https://github.com/pycontribs/wstools
+- Mailing List:	https://groups.google.com/forum/#!forum/pycontribs
+- Package:	http://pypi.python.org/pypi/wstools/
+- Docs (TBD):	http://packages.python.org/wstools
 
 Credits
 ========
