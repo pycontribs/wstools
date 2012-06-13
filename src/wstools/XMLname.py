@@ -85,6 +85,7 @@ def fromXMLname(string):
     def fun( matchobj ):
         return _fromUnicodeHex( matchobj.group(0) )
 
-    retval = sub(r'_x[0-9A-Za-z]+_', fun, retval )
-        
+
+    retval = sub(r'_x[0-9A-Fa-f]{4}_', fun, retval )
+           
     return retval
