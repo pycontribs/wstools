@@ -6,4 +6,3 @@ ident = "$Id$"
 import WSDLTools
 import XMLname
 import logging
-

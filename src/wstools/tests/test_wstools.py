@@ -5,12 +5,16 @@
 # See LBNLCopyright for copyright notice!
 ###########################################################################
 
-import unittest, tarfile, os, ConfigParser
+import unittest
+import tarfile
+import os
+import ConfigParser
 import test_wsdl
 
 
-SECTION='files'
+SECTION = 'files'
 CONFIG_FILE = 'config.txt'
+
 
 def extractFiles(section, option):
     config = ConfigParser.ConfigParser()
@@ -20,18 +24,19 @@ def extractFiles(section, option):
     for file in archives:
         tar = tarfile.open(file)
         if not os.access(tar.membernames[0], os.R_OK):
-            for i in tar.getnames(): 
+            for i in tar.getnames():
                 tar.extract(i)
+
 
 def makeTestSuite():
     suite = unittest.TestSuite()
     suite.addTest(test_wsdl.makeTestSuite("services_by_file"))
     return suite
 
+
 def main():
     extractFiles(SECTION, 'archives')
     unittest.main(defaultTest="makeTestSuite")
 
-if __name__ == "__main__" : main()
-    
-
+if __name__ == "__main__":
+    main()

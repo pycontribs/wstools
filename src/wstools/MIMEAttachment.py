@@ -12,10 +12,11 @@ import sys
 
 
 #new line
-NL='\r\n'
+NL = '\r\n'
 
-_width = len(repr(sys.maxint-1))
+_width = len(repr(sys.maxint - 1))
 _fmt = '%%0%dd' % _width
+
 
 class MIMEMessage:
 
@@ -26,19 +27,18 @@ class MIMEMessage:
         self._boundary = ""
 
     def makeBoundary(self):
-        #create the boundary 
+        #create the boundary
         msgparts = []
         msgparts.append(self._xmlMessage)
         for i in self._files:
             msgparts.append(i.read())
         #this sucks, all in memory
         alltext = NL.join(msgparts)
-        self._boundary  = _make_boundary(alltext)
+        self._boundary = _make_boundary(alltext)
         #maybe I can save some memory
         del alltext
         del msgparts
-        self._startCID =  "<" + (_fmt % random.randrange(sys.maxint)) + (_fmt % random.randrange(sys.maxint)) + ">"
-
+        self._startCID = "<" + (_fmt % random.randrange(sys.maxint)) + (_fmt % random.randrange(sys.maxint)) + ">"
 
     def toString(self):
         '''it return a string with the MIME message'''
@@ -61,7 +61,7 @@ class MIMEMessage:
             file.seek(0)
             returnstr += file.read() + NL
         #closing boundary
-        returnstr += "--" + self._boundary + "--" + NL 
+        returnstr += "--" + self._boundary + "--" + NL
         return returnstr
 
     def attachFile(self, file):
@@ -78,7 +78,7 @@ class MIMEMessage:
 
     def getBoundary(self):
         '''
-        this function returns the string used in the mime message as a 
+        this function returns the string used in the mime message as a
         boundary. First the write method as to be called
         '''
         return self._boundary
@@ -107,4 +107,3 @@ def _make_boundary(text=None):
         b = boundary + '.' + str(counter)
         counter += 1
     return b
-

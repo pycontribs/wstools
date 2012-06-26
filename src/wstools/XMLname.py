@@ -19,59 +19,68 @@ from re import *
 
 
 def _NCNameChar(x):
-    return x.isalpha() or x.isdigit() or x=="." or x=='-' or x=="_" 
+    return x.isalpha() or x.isdigit() or x == "." or x == '-' or x == "_"
 
 
 def _NCNameStartChar(x):
-    return x.isalpha() or x=="_" 
+    return x.isalpha() or x == "_"
 
 
 def _toUnicodeHex(x):
     hexval = hex(ord(x[0]))[2:]
     hexlen = len(hexval)
     # Make hexval have either 4 or 8 digits by prepending 0's
-    if   (hexlen==1): hexval = "000" + hexval
-    elif (hexlen==2): hexval = "00"  + hexval
-    elif (hexlen==3): hexval = "0"   + hexval
-    elif (hexlen==4): hexval = ""    + hexval
-    elif (hexlen==5): hexval = "000" + hexval
-    elif (hexlen==6): hexval = "00"  + hexval
-    elif (hexlen==7): hexval = "0"   + hexval
-    elif (hexlen==8): hexval = ""    + hexval    
-    else: raise Exception, "Illegal Value returned from hex(ord(x))"
-    
-    return "_x"+ hexval + "_"
+    if   (hexlen == 1):
+        hexval = "000" + hexval
+    elif (hexlen == 2):
+        hexval = "00" + hexval
+    elif (hexlen == 3):
+        hexval = "0" + hexval
+    elif (hexlen == 4):
+        hexval = "" + hexval
+    elif (hexlen == 5):
+        hexval = "000" + hexval
+    elif (hexlen == 6):
+        hexval = "00" + hexval
+    elif (hexlen == 7):
+        hexval = "0" + hexval
+    elif (hexlen == 8):
+        hexval = "" + hexval
+    else:
+        raise Exception("Illegal Value returned from hex(ord(x))")
+
+    return "_x" + hexval + "_"
 
 
 def _fromUnicodeHex(x):
-    return eval( r'u"\u'+x[2:-1]+'"' ) 
+    return eval(r'u"\u' + x[2:-1] + '"')
 
 
 def toXMLname(string):
     """Convert string to a XML name."""
-    if string.find(':') != -1 :
-        (prefix, localname) = string.split(':',1)
+    if string.find(':') != -1:
+        (prefix, localname) = string.split(':', 1)
     else:
         prefix = None
         localname = string
-    
+
     T = unicode(localname)
 
     N = len(localname)
-    X = [];
-    for i in range(N) :
-        if i< N-1 and T[i]==u'_' and T[i+1]==u'x':
+    X = []
+    for i in range(N):
+        if i < N - 1 and T[i] == u'_' and T[i + 1] == u'x':
             X.append(u'_x005F_')
-        elif i==0 and N >= 3 and \
-                 ( T[0]==u'x' or T[0]==u'X' ) and \
-                 ( T[1]==u'm' or T[1]==u'M' ) and \
-                 ( T[2]==u'l' or T[2]==u'L' ):
+        elif i == 0 and N >= 3 and \
+                 (T[0] == u'x' or T[0] == u'X') and \
+                 (T[1] == u'm' or T[1] == u'M') and \
+                 (T[2] == u'l' or T[2] == u'L'):
             X.append(u'_xFFFF_' + T[0])
-        elif (not _NCNameChar(T[i])) or (i==0 and not _NCNameStartChar(T[i])):
+        elif (not _NCNameChar(T[i])) or (i == 0 and not _NCNameStartChar(T[i])):
             X.append(_toUnicodeHex(T[i]))
         else:
             X.append(T[i])
-    
+
     if prefix:
         return "%s:%s" % (prefix, u''.join(X))
     return u''.join(X)
@@ -80,12 +89,11 @@ def toXMLname(string):
 def fromXMLname(string):
     """Convert XML name to unicode string."""
 
-    retval = sub(r'_xFFFF_','', string )
+    retval = sub(r'_xFFFF_', '', string)
 
-    def fun( matchobj ):
-        return _fromUnicodeHex( matchobj.group(0) )
+    def fun(matchobj):
+        return _fromUnicodeHex(matchobj.group(0))
 
+    retval = sub(r'_x[0-9A-Fa-f]{4}_', fun, retval)
 
-    retval = sub(r'_x[0-9A-Fa-f]{4}_', fun, retval )
-           
     return retval

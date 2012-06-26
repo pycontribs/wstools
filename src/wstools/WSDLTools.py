@@ -20,7 +20,7 @@ class WSDLReader:
     """A WSDLReader creates WSDL instances from urls and xml data."""
 
     # Custom subclasses of WSDLReader may wish to implement a caching
-    # strategy or other optimizations. Because application needs vary 
+    # strategy or other optimizations. Because application needs vary
     # so widely, we don't try to provide any caching by default.
 
     def loadFromStream(self, stream, name=None):
@@ -55,6 +55,7 @@ class WSDLReader:
             file.close()
         return wsdl
 
+
 class WSDL:
     """A WSDL object models a WSDL service description. WSDL objects
        may be created manually or loaded from an xml representation
@@ -82,7 +83,7 @@ class WSDL:
     version = '1.1'
 
     def addService(self, name, documentation='', targetNamespace=None):
-        if self.services.has_key(name):
+        if name in self.services:
             raise WSDLError(
                 'Duplicate service element: %s' % name
                 )
@@ -93,7 +94,7 @@ class WSDL:
         return item
 
     def addMessage(self, name, documentation='', targetNamespace=None):
-        if self.messages.has_key(name):
+        if name in self.messages:
             raise WSDLError(
                 'Duplicate message element: %s.' % name
                 )
@@ -104,7 +105,7 @@ class WSDL:
         return item
 
     def addPortType(self, name, documentation='', targetNamespace=None):
-        if self.portTypes.has_key(name):
+        if name in self.portTypes:
             raise WSDLError(
                 'Duplicate portType element: name'
                 )
@@ -115,7 +116,7 @@ class WSDL:
         return item
 
     def addBinding(self, name, type, documentation='', targetNamespace=None):
-        if self.bindings.has_key(name):
+        if name in self.bindings:
             raise WSDLError(
                 'Duplicate binding element: %s' % name
                 )
@@ -133,11 +134,11 @@ class WSDL:
     def toDom(self):
         """ Generate a DOM representation of the WSDL instance.
         Not dealing with generating XML Schema, thus the targetNamespace
-        of all XML Schema elements or types used by WSDL message parts 
+        of all XML Schema elements or types used by WSDL message parts
         needs to be specified via import information items.
         """
         namespaceURI = DOM.GetWSDLUri(self.version)
-        self.document = DOM.createDocument(namespaceURI ,'wsdl:definitions')
+        self.document = DOM.createDocument(namespaceURI, 'wsdl:definitions')
 
         # Set up a couple prefixes for easy reading.
         child = DOM.getElement(self.document, None)
@@ -146,12 +147,12 @@ class WSDL:
         child.setAttributeNS(XMLNS.BASE, 'xmlns:xsd', 'http://www.w3.org/1999/XMLSchema')
         child.setAttributeNS(XMLNS.BASE, 'xmlns:soap', 'http://schemas.xmlsoap.org/wsdl/soap/')
         child.setAttributeNS(XMLNS.BASE, 'xmlns:tns', self.targetNamespace)
-        
+
         if self.name:
             child.setAttributeNS(None, 'name', self.name)
 
         # wsdl:import
-        for item in self.imports: 
+        for item in self.imports:
             item.toDom()
         # wsdl:message
         for item in self.messages:
@@ -186,13 +187,13 @@ class WSDL:
         self.name = DOM.getAttr(definitions, 'name', None, None)
         self.documentation = GetDocumentation(definitions)
 
-        # 
+        #
         # Retrieve all <wsdl:import>'s, append all children of imported
-        # document to main document.  First iteration grab all original 
-        # <wsdl:import>'s from document, second iteration grab all 
-        # "imported" <wsdl:imports> from document, etc break out when 
+        # document to main document.  First iteration grab all original
+        # <wsdl:import>'s from document, second iteration grab all
+        # "imported" <wsdl:imports> from document, etc break out when
         # no more <wsdl:import>'s.
-        # 
+        #
         imported = []
         base_location = self.location
         do_it = True
@@ -203,7 +204,7 @@ class WSDL:
 
                 if base_location is not None:
                     location = basejoin(base_location, location)
-                    
+
                 if location not in imported:
                     do_it = True
                     self._import(document, element, base_location)
@@ -213,10 +214,10 @@ class WSDL:
 
             base_location = None
 
-        # 
-        # No more <wsdl:import>'s, now load up all other 
+        #
+        # No more <wsdl:import>'s, now load up all other
         # WSDL information items.
-        # 
+        #
         for element in DOM.getElements(definitions, None, None):
             targetNamespace = DOM.getAttr(element, 'targetNamespace')
             localName = element.localName
@@ -296,15 +297,15 @@ class WSDL:
 
     def _import(self, document, element, base_location=None):
         '''Algo take <import> element's children, clone them,
-        and add them to the main document.  Support for relative 
+        and add them to the main document.  Support for relative
         locations is a bit complicated.  The orig document context
         is lost, so we need to store base location in DOM elements
-        representing <types>, by creating a special temporary 
+        representing <types>, by creating a special temporary
         "base-location" attribute,  and <import>, by resolving
         the relative "location" and storing it as "location".
-        
+
         document -- document we are loading
-        element -- DOM Element representing <import> 
+        element -- DOM Element representing <import>
         base_location -- location of document from which this
             <import> was gleaned.
         '''
@@ -344,7 +345,7 @@ class WSDL:
             parent = element.parentNode
 
             parent.removeChild(element)
-            
+
             for node in imported_nodes:
                 if node.nodeType != node.ELEMENT_NODE:
                     continue
@@ -369,6 +370,7 @@ class WSDL:
             importdoc.unlink()
         return location
 
+
 class Element:
     """A class that provides common functions for WSDL element classes."""
     def __init__(self, name=None, documentation=''):
@@ -379,7 +381,7 @@ class Element:
     def addExtension(self, item):
         item.parent = weakref.ref(self)
         self.extensions.append(item)
-        
+
     def getWSDL(self):
         """Return the WSDL object that contains this information item."""
         parent = self
@@ -387,9 +389,11 @@ class Element:
             # skip any collections
             if isinstance(parent, WSDL):
                 return parent
-            try: parent = parent.parent()
-            except: break
-            
+            try:
+                parent = parent.parent()
+            except:
+                break
+
         return None
 
 
@@ -413,7 +417,8 @@ class ImportElement(Element):
 
 
 class Types(Collection):
-    default = lambda self,k: k.targetNamespace
+    default = lambda self, k: k.targetNamespace
+
     def __init__(self, parent):
         Collection.__init__(self, parent)
         self.documentation = ''
@@ -434,7 +439,7 @@ class Message(Element):
         self.parts = Collection(self)
 
     def addPart(self, name, type=None, element=None):
-        if self.parts.has_key(name):
+        if name in self.parts:
             raise WSDLError(
                 'Duplicate message part element: %s' % name
                 )
@@ -510,13 +515,13 @@ class MessagePart(Element):
 
     def getTypeDefinition(self):
         wsdl = self.getWSDL()
-        nsuri,name = self.type
+        nsuri, name = self.type
         schema = wsdl.types.get(nsuri, {})
         return schema.get(name)
 
     def getElementDeclaration(self):
         wsdl = self.getWSDL()
-        nsuri,name = self.element
+        nsuri, name = self.element
         schema = wsdl.types.get(nsuri, {})
         return schema.get(name)
 
@@ -528,13 +533,13 @@ class MessagePart(Element):
         epc.setAttributeNS(None, 'name', self.name)
 
         if self.element is not None:
-            ns,name = self.element
+            ns, name = self.element
             prefix = epc.getPrefix(ns)
-            epc.setAttributeNS(None, 'element', '%s:%s'%(prefix,name))
+            epc.setAttributeNS(None, 'element', '%s:%s' % (prefix, name))
         elif self.type is not None:
-            ns,name = self.type
+            ns, name = self.type
             prefix = epc.getPrefix(ns)
-            epc.setAttributeNS(None, 'type', '%s:%s'%(prefix,name))
+            epc.setAttributeNS(None, 'type', '%s:%s' % (prefix, name))
 
 
 class PortType(Element):
@@ -598,7 +603,8 @@ class PortType(Element):
                 message = ParseQName(msgref, item)
                 for WSA in WSA_LIST + WSAW_LIST:
                     action = DOM.getAttr(item, 'Action', WSA.ADDRESS, None)
-                    if action: break
+                    if action:
+                        break
                 operation.setInput(message, name, docs, action)
 
             item = DOM.getElement(element, 'output', None, None)
@@ -609,7 +615,8 @@ class PortType(Element):
                 message = ParseQName(msgref, item)
                 for WSA in WSA_LIST + WSAW_LIST:
                     action = DOM.getAttr(item, 'Action', WSA.ADDRESS, None)
-                    if action: break
+                    if action:
+                        break
                 operation.setOutput(message, name, docs, action)
 
             for item in DOM.getElements(element, 'fault', None):
@@ -619,9 +626,10 @@ class PortType(Element):
                 message = ParseQName(msgref, item)
                 for WSA in WSA_LIST + WSAW_LIST:
                     action = DOM.getAttr(item, 'Action', WSA.ADDRESS, None)
-                    if action: break
+                    if action:
+                        break
                 operation.addFault(message, name, docs, action)
-                
+
     def toDom(self):
         wsdl = self.getWSDL()
 
@@ -629,14 +637,13 @@ class PortType(Element):
         epc = ep.createAppendElement(DOM.GetWSDLUri(wsdl.version), 'portType')
         epc.setAttributeNS(None, 'name', self.name)
         if self.resourceProperties:
-            ns,name = self.resourceProperties
+            ns, name = self.resourceProperties
             prefix = epc.getPrefix(ns)
-            epc.setAttributeNS(WSRF.PROPERTIES.LATEST, 'ResourceProperties', 
-                                '%s:%s'%(prefix,name))
+            epc.setAttributeNS(WSRF.PROPERTIES.LATEST, 'ResourceProperties',
+                                '%s:%s' % (prefix, name))
 
         for op in self.operations:
             op.toDom(epc._getNode())
-
 
 
 class Operation(Element):
@@ -683,7 +690,7 @@ class Operation(Element):
         return wsdl.messages[self.faults[name].message]
 
     def addFault(self, message, name, documentation='', action=None):
-        if self.faults.has_key(name):
+        if name in self.faults:
             raise WSDLError(
                 'Duplicate fault element: %s' % name
                 )
@@ -709,11 +716,11 @@ class Operation(Element):
         epc.setAttributeNS(None, 'name', self.name)
         node = epc._getNode()
         if self.input:
-           self.input.toDom(node)
+            self.input.toDom(node)
         if self.output:
-           self.output.toDom(node)
+            self.output.toDom(node)
         for fault in self.faults:
-           fault.toDom(node)
+            fault.toDom(node)
 
 
 class MessageRole(Element):
@@ -722,7 +729,7 @@ class MessageRole(Element):
         self.message = message
         self.type = type
         self.action = action
-        
+
     def getWSDL(self):
         """Return the WSDL object that contains this information item."""
         parent = self
@@ -730,13 +737,15 @@ class MessageRole(Element):
             # skip any collections
             if isinstance(parent, WSDL):
                 return parent
-            try: parent = parent.parent()
-            except: break
-            
+            try:
+                parent = parent.parent()
+            except:
+                break
+
         return None
 
     def getMessage(self):
-        """Return the WSDL object that represents the attribute message 
+        """Return the WSDL object that represents the attribute message
         (namespaceURI, name) tuple
         """
         wsdl = self.getWSDL()
@@ -748,18 +757,18 @@ class MessageRole(Element):
         ep = ElementProxy(None, node)
         epc = ep.createAppendElement(DOM.GetWSDLUri(wsdl.version), self.type)
         if not isinstance(self.message, basestring) and len(self.message) == 2:
-            ns,name = self.message
+            ns, name = self.message
             prefix = epc.getPrefix(ns)
-            epc.setAttributeNS(None, 'message', '%s:%s' %(prefix,name))
+            epc.setAttributeNS(None, 'message', '%s:%s' % (prefix, name))
         else:
             epc.setAttributeNS(None, 'message', self.message)
 
         if self.action:
             epc.setAttributeNS(WSA.ADDRESS, 'Action', self.action)
-            
+
         if self.name:
             epc.setAttributeNS(None, 'name', self.name)
-        
+
 
 class Binding(Element):
     def __init__(self, name, type, documentation=''):
@@ -782,7 +791,7 @@ class Binding(Element):
         return None
 
     def findBindings(self, kind):
-        return [ item for item in self.extensions if isinstance(item, kind) ]
+        return [item for item in self.extensions if isinstance(item, kind)]
 
     def addOperationBinding(self, name, documentation=''):
         item = OperationBinding(name, documentation)
@@ -844,9 +853,9 @@ class Binding(Element):
         epc = ep.createAppendElement(DOM.GetWSDLUri(wsdl.version), 'binding')
         epc.setAttributeNS(None, 'name', self.name)
 
-        ns,name = self.type
+        ns, name = self.type
         prefix = epc.getPrefix(ns)
-        epc.setAttributeNS(None, 'type', '%s:%s' %(prefix,name))
+        epc.setAttributeNS(None, 'type', '%s:%s' % (prefix, name))
 
         node = epc._getNode()
         for ext in self.extensions:
@@ -866,7 +875,6 @@ class OperationBinding(Element):
 #        """Return the WSDL object that contains this binding."""
 #        return self.parent().parent().parent().parent()
 
-
     def getBinding(self):
         """Return the parent Binding object of the operation binding."""
         return self.parent().parent()
@@ -874,7 +882,7 @@ class OperationBinding(Element):
     def getOperation(self):
         """Return the abstract Operation associated with this binding."""
         return self.getBinding().getPortType().operations[self.name]
-        
+
     def findBinding(self, kind):
         for item in self.extensions:
             if isinstance(item, kind):
@@ -882,7 +890,7 @@ class OperationBinding(Element):
         return None
 
     def findBindings(self, kind):
-        return [ item for item in self.extensions if isinstance(item, kind) ]
+        return [item for item in self.extensions if isinstance(item, kind)]
 
     def addInputBinding(self, binding):
         if self.input is None:
@@ -951,7 +959,7 @@ class MessageRoleBinding(Element):
         return None
 
     def findBindings(self, kind):
-        return [ item for item in self.extensions if isinstance(item, kind) ]
+        return [item for item in self.extensions if isinstance(item, kind)]
 
     def load_ex(self, elements):
         for e in elements:
@@ -1038,7 +1046,8 @@ class MessageRoleBinding(Element):
 
         node = epc._getNode()
         for item in self.extensions:
-            if item: item.toDom(node)
+            if item:
+                item.toDom(node)
 
 
 class Service(Element):
@@ -1138,9 +1147,9 @@ class Port(Element):
         epc = ep.createAppendElement(DOM.GetWSDLUri(wsdl.version), "port")
         epc.setAttributeNS(None, "name", self.name)
 
-        ns,name = self.binding
+        ns, name = self.binding
         prefix = epc.getPrefix(ns)
-        epc.setAttributeNS(None, "binding", "%s:%s" %(prefix,name))
+        epc.setAttributeNS(None, "binding", "%s:%s" % (prefix, name))
 
         node = epc._getNode()
         for ext in self.extensions:
@@ -1163,6 +1172,7 @@ class SoapBinding:
             epc.setAttributeNS(None, "transport", self.transport)
         if self.style:
             epc.setAttributeNS(None, "style", self.style)
+
 
 class SoapAddressBinding:
     def __init__(self, location):
@@ -1230,10 +1240,10 @@ class SoapFaultBinding:
         self.namespace = namespace
         self.name = name
         self.use = use
-        
+
     def getWSDL(self):
         return self.parent().getWSDL()
-    
+
     def toDom(self, node):
         wsdl = self.getWSDL()
         ep = ElementProxy(None, node)
@@ -1260,6 +1270,7 @@ class SoapHeaderBinding:
 
     tagname = 'header'
 
+
 class SoapHeaderFaultBinding(SoapHeaderBinding):
     tagname = 'headerfault'
 
@@ -1267,6 +1278,7 @@ class SoapHeaderFaultBinding(SoapHeaderBinding):
 class HttpBinding:
     def __init__(self, verb):
         self.verb = verb
+
 
 class HttpAddressBinding:
     def __init__(self, location):
@@ -1276,6 +1288,7 @@ class HttpAddressBinding:
 class HttpOperationBinding:
     def __init__(self, location):
         self.location = location
+
 
 class HttpUrlReplacementBinding:
     pass
@@ -1346,11 +1359,11 @@ class WSDLError(Exception):
     pass
 
 
-
 def DeclareNSPrefix(writer, prefix, nsuri):
     if writer.hasNSPrefix(nsuri):
         return
     writer.declareNSPrefix(prefix, nsuri)
+
 
 def ParseTypeRef(value, element):
     parts = value.split(':', 1)
@@ -1359,6 +1372,7 @@ def ParseTypeRef(value, element):
     nsuri = DOM.findNamespaceURI(parts[0], element)
     return (nsuri, parts[1])
 
+
 def ParseQName(value, element):
     nameref = value.split(':', 1)
     if len(nameref) == 2:
@@ -1366,8 +1380,9 @@ def ParseQName(value, element):
         name = nameref[-1]
     else:
         nsuri = DOM.findTargetNS(element)
-        name  = nameref[-1]
+        name = nameref[-1]
     return nsuri, name
+
 
 def GetDocumentation(element):
     docnode = DOM.getElement(element, 'documentation', None, None)
@@ -1375,9 +1390,11 @@ def GetDocumentation(element):
         return DOM.getElementText(docnode)
     return ''
 
+
 def GetExtensions(element):
-    return [ item for item in DOM.getElements(element, None, None)
-        if item.namespaceURI != DOM.NS_WSDL ]
+    return [item for item in DOM.getElements(element, None, None)
+        if item.namespaceURI != DOM.NS_WSDL]
+
 
 def GetWSAActionFault(operation, name):
     """Find wsa:Action attribute, and return value or WSA.FAULT
@@ -1387,6 +1404,7 @@ def GetWSAActionFault(operation, name):
     if attr is not None:
         return attr
     return WSA.FAULT
+
 
 def GetWSAActionInput(operation):
     """Find wsa:Action attribute, and return value or the default."""
@@ -1400,8 +1418,9 @@ def GetWSAActionInput(operation):
     if not msgName:
         msgName = operation.name + 'Request'
     if targetNamespace.endswith('/'):
-        return '%s%s/%s' %(targetNamespace, ptName, msgName)
-    return '%s/%s/%s' %(targetNamespace, ptName, msgName)
+        return '%s%s/%s' % (targetNamespace, ptName, msgName)
+    return '%s/%s/%s' % (targetNamespace, ptName, msgName)
+
 
 def GetWSAActionOutput(operation):
     """Find wsa:Action attribute, and return value or the default."""
@@ -1414,26 +1433,28 @@ def GetWSAActionOutput(operation):
     if not msgName:
         msgName = operation.name + 'Response'
     if targetNamespace.endswith('/'):
-        return '%s%s/%s' %(targetNamespace, ptName, msgName)
-    return '%s/%s/%s' %(targetNamespace, ptName, msgName)
+        return '%s%s/%s' % (targetNamespace, ptName, msgName)
+    return '%s/%s/%s' % (targetNamespace, ptName, msgName)
+
 
 def FindExtensions(object, kind, t_type=type(())):
     if isinstance(kind, t_type):
         result = []
         namespaceURI, name = kind
-        return [ item for item in object.extensions
+        return [item for item in object.extensions
                 if hasattr(item, 'nodeType') \
                 and DOM.nsUriMatch(namespaceURI, item.namespaceURI) \
-                and item.name == name ]
-    return [ item for item in object.extensions if isinstance(item, kind) ]
+                and item.name == name]
+    return [item for item in object.extensions if isinstance(item, kind)]
+
 
 def FindExtension(object, kind, t_type=type(())):
     if isinstance(kind, t_type):
         namespaceURI, name = kind
         for item in object.extensions:
             if hasattr(item, 'nodeType') \
-            and DOM.nsUriMatch(namespaceURI, item.namespaceURI) \
-            and item.name == name:
+                and DOM.nsUriMatch(namespaceURI, item.namespaceURI) \
+                and item.name == name:
                 return item
     else:
         for item in object.extensions:
@@ -1443,7 +1464,7 @@ def FindExtension(object, kind, t_type=type(())):
 
 
 class SOAPCallInfo:
-    """SOAPCallInfo captures the important binding information about a 
+    """SOAPCallInfo captures the important binding information about a
        SOAP operation, in a structure that is easier to work with than
        raw WSDL structures."""
 
@@ -1557,12 +1578,12 @@ def callInfoFromWSDL(port, name):
 
     addrbinding = port.getAddressBinding()
     if not isinstance(addrbinding, SoapAddressBinding):
-        raise ValueError, 'Unsupported binding type.'        
+        raise ValueError('Unsupported binding type.')
     callinfo.location = addrbinding.location
 
     soapbinding = binding.findBinding(SoapBinding)
     if soapbinding is None:
-        raise ValueError, 'Missing soap:binding element.'
+        raise ValueError('Missing soap:binding element.')
     callinfo.transport = soapbinding.transport
     callinfo.style = soapbinding.style or 'document'
 
@@ -1579,7 +1600,7 @@ def callInfoFromWSDL(port, name):
 
         mime = msgrole.findBinding(MimeMultipartRelatedBinding)
         if mime is not None:
-            raise ValueError, 'Mime bindings are not supported.'
+            raise ValueError('Mime bindings are not supported.')
         else:
             for item in msgrole.findBindings(SoapHeaderBinding):
                 part = messages[item.message].parts[item.part]
@@ -1587,13 +1608,13 @@ def callInfoFromWSDL(port, name):
                     part.name,
                     part.element or part.type,
                     item.namespace,
-                    element_type = part.element and 1 or 0
+                    element_type=part.element and 1 or 0
                     )
                 header.encodingStyle = item.encodingStyle
 
             body = msgrole.findBinding(SoapBodyBinding)
             if body is None:
-                raise ValueError, 'Missing soap:body binding.'
+                raise ValueError('Missing soap:body binding.')
             callinfo.encodingStyle = body.encodingStyle
             callinfo.namespace = body.namespace
             callinfo.use = body.use
@@ -1609,7 +1630,7 @@ def callInfoFromWSDL(port, name):
                 callinfo.addInParameter(
                     part.name,
                     part.element or part.type,
-                    element_type = part.element and 1 or 0
+                    element_type=part.element and 1 or 0
                     )
 
     if operation.output is not None:
@@ -1626,12 +1647,12 @@ def callInfoFromWSDL(port, name):
                       "Recieved message not defined in the WSDL schema.", \
                       "Adding it."
                 print "Message:", operation.output.message
-         
+
         msgrole = opbinding.output
 
         mime = msgrole.findBinding(MimeMultipartRelatedBinding)
         if mime is not None:
-            raise ValueError, 'Mime bindings are not supported.'
+            raise ValueError('Mime bindings are not supported.')
         else:
             for item in msgrole.findBindings(SoapHeaderBinding):
                 part = messages[item.message].parts[item.part]
@@ -1639,13 +1660,13 @@ def callInfoFromWSDL(port, name):
                     part.name,
                     part.element or part.type,
                     item.namespace,
-                    element_type = part.element and 1 or 0
+                    element_type=part.element and 1 or 0
                     )
                 header.encodingStyle = item.encodingStyle
 
             body = msgrole.findBinding(SoapBodyBinding)
             if body is None:
-                raise ValueError, 'Missing soap:body binding.'
+                raise ValueError('Missing soap:body binding.')
             callinfo.encodingStyle = body.encodingStyle
             callinfo.namespace = body.namespace
             callinfo.use = body.use
@@ -1662,7 +1683,7 @@ def callInfoFromWSDL(port, name):
                     callinfo.addOutParameter(
                         part.name,
                         part.element or part.type,
-                        element_type = part.element and 1 or 0
+                        element_type=part.element and 1 or 0
                         )
 
     return callinfo

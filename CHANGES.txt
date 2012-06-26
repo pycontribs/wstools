@@ -1,12 +1,11 @@
 CHANGELOG
 ===========
 
-0.4 (unreleased)
+0.4 (2012-06-26)
 ----------------
 
-- Nothing changed yet.
-
-
+- Replaced print() with logging.debug() or warn() in order to allow users to change verbosity.
+- Added release.sh script which runs tests, pep8 and allow you to release only when these are passing.
 
 0.3 (2011-02-21)
 ----------------

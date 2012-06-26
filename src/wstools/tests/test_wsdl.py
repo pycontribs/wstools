@@ -5,7 +5,8 @@
 # See LBNLCopyright for copyright notice!
 ###########################################################################
 
-import sys, unittest
+import sys
+import unittest
 import ConfigParser
 import os
 from wstools.Utility import DOM
@@ -14,6 +15,7 @@ from wstools.TimeoutSocket import TimeoutError
 
 from wstools import tests
 cwd = os.path.dirname(tests.__file__)
+
 
 class WSDLToolsTestCase(unittest.TestCase):
 
@@ -28,7 +30,7 @@ class WSDLToolsTestCase(unittest.TestCase):
     def __str__(self):
         teststr = unittest.TestCase.__str__(self)
         if hasattr(self, "path"):
-            return "%s: %s" % (teststr, self.path )
+            return "%s: %s" % (teststr, self.path)
         else:
             return "%s" % (teststr)
 
@@ -41,12 +43,12 @@ class WSDLToolsTestCase(unittest.TestCase):
         for node in DOM.getElements(definition, tag_name, nspname):
             name = DOM.getAttr(node, key)
             comp = component[name]
-            self.failUnlessEqual(eval('comp.%s' %key), name)
+            self.failUnlessEqual(eval('comp.%s' % key), name)
 
     def checkXSDCollection(self, tag_name, component, node, key='name'):
         for cnode in DOM.getElements(node, tag_name):
             name = DOM.getAttr(cnode, key)
-            component[name] 
+            component[name]
 
     def test_all(self):
         try:
@@ -88,13 +90,14 @@ class WSDLToolsTestCase(unittest.TestCase):
             raise
 
         try:
-            self.checkWSDLCollection('import', self.wsdl.imports, key='namespace')
+            self.checkWSDLCollection('import', self.wsdl.imports, \
+                key='namespace')
         except:
             self.path = self.path + ": wsdl.imports"
             raise
 
         try:
-            for key in self.wsdl.types.keys(): 
+            for key in self.wsdl.types.keys():
                 schema = self.wsdl.types[key]
                 self.failUnlessEqual(key, schema.getTargetNamespace())
 
@@ -114,8 +117,9 @@ class WSDLToolsTestCase(unittest.TestCase):
             raise
 
         if self.wsdl.extensions:
-            print 'No check for WSDLTools(%s) Extensions:' %(self.wsdl.name)
-            for ext in self.wsdl.extensions: print '\t', ext
+            print 'No check for WSDLTools(%s) Extensions:' % (self.wsdl.name)
+            for ext in self.wsdl.extensions:
+                print '\t', ext
 
     def schemaAttributesDeclarations(self, schema, node):
         self.checkXSDCollection('attribute', schema.attr_decl, node)
@@ -133,7 +137,7 @@ class WSDLToolsTestCase(unittest.TestCase):
 
 def setUpOptions(section):
     cp = ConfigParser.ConfigParser()
-    cp.read(cwd+'/config.txt')
+    cp.read(cwd + '/config.txt')
     if not cp.sections():
         print 'fatal error:  configuration file config.txt not present'
         sys.exit(0)
@@ -142,10 +146,12 @@ def setUpOptions(section):
         sys.exit(0)
     return cp, len(cp.options(section))
 
+
 def getOption(cp, section):
     for name, value in cp.items(section):
         yield value
-    
+
+
 def makeTestSuite(section='services_by_file'):
     global nameGenerator
 
@@ -159,6 +165,7 @@ def makeTestSuite(section='services_by_file'):
 
 def main():
     unittest.main(defaultTest="makeTestSuite")
-                  
 
-if __name__ == "__main__" : main()
+
+if __name__ == "__main__":
+    main()

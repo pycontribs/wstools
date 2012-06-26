@@ -6,16 +6,19 @@
 
    The original timeout_socket is by:
 
-	Scott Cotton <scott@chronis.pobox.com>
-	Lloyd Zusman <ljz@asfast.com>
-	Phil Mayes <pmayes@olivebr.com>
-	Piers Lauder <piers@cs.su.oz.au>
-	Radovan Garabik <garabik@melkor.dnp.fmph.uniba.sk>
+        Scott Cotton <scott@chronis.pobox.com>
+        Lloyd Zusman <ljz@asfast.com>
+        Phil Mayes <pmayes@olivebr.com>
+        Piers Lauder <piers@cs.su.oz.au>
+        Radovan Garabik <garabik@melkor.dnp.fmph.uniba.sk>
 """
 
 ident = "$Id$"
 
-import string, socket, select, errno
+import string
+import socket
+import select
+import errno
 
 WSAEINVAL = getattr(errno, 'WSAEINVAL', 10022)
 
@@ -46,7 +49,7 @@ class TimeoutSocket:
             apply(sock.connect, addr)
             sock.setblocking(timeout != 0)
             return 1
-        except socket.error,why:
+        except socket.error, why:
             if not timeout:
                 raise
             sock.setblocking(1)
@@ -58,12 +61,12 @@ class TimeoutSocket:
                 errno.EINPROGRESS, errno.EALREADY, errno.EWOULDBLOCK
                 ):
                 raise
-            r,w,e = select.select([],[sock],[],timeout)
+            r, w, e = select.select([], [sock], [], timeout)
             if w:
                 try:
                     apply(sock.connect, addr)
                     return 1
-                except socket.error,why:
+                except socket.error, why:
                     if len(why.args) == 1:
                         code = 0
                     else:
@@ -77,7 +80,7 @@ class TimeoutSocket:
         total = len(data)
         next = 0
         while 1:
-            r, w, e = select.select([],[self.sock], [], self.timeout)
+            r, w, e = select.select([], [self.sock], [], self.timeout)
             if w:
                 buff = data[next:next + 8192]
                 sent = self.sock.send(buff, flags)
@@ -119,7 +122,8 @@ class TimeoutSocket:
             self._rbuf = ""
             while n > 0:
                 new = self.recv(max(n, self.buffsize))
-                if not new: break
+                if not new:
+                    break
                 k = len(new)
                 if k > n:
                     L.append(new[:n])
@@ -133,9 +137,10 @@ class TimeoutSocket:
         self._rbuf = ""
         while 1:
             new = self.recv(k)
-            if not new: break
+            if not new:
+                break
             L.append(new)
-            k = min(k*2, 1024**2)
+            k = min(k * 2, 1024 ** 2)
         return "".join(L)
 
     def readline(self, limit=-1):
@@ -143,22 +148,28 @@ class TimeoutSocket:
         i = self._rbuf.find('\n')
         while i < 0 and not (0 < limit <= len(self._rbuf)):
             new = self.recv(self.buffsize)
-            if not new: break
+            if not new:
+                break
             i = new.find('\n')
-            if i >= 0: i = i + len(self._rbuf)
+            if i >= 0:
+                i = i + len(self._rbuf)
             self._rbuf = self._rbuf + new
-        if i < 0: i = len(self._rbuf)
-        else: i = i+1
-        if 0 <= limit < len(self._rbuf): i = limit
+        if i < 0:
+            i = len(self._rbuf)
+        else:
+            i = i + 1
+        if 0 <= limit < len(self._rbuf):
+            i = limit
         data, self._rbuf = self._rbuf[:i], self._rbuf[i:]
         return data
 
-    def readlines(self, sizehint = 0):
+    def readlines(self, sizehint=0):
         total = 0
         list = []
         while 1:
             line = self.readline()
-            if not line: break
+            if not line:
+                break
             list.append(line)
             total += len(line)
             if sizehint and total >= sizehint:
