@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-#
-# $Id: setup.py,v 1.11 2005/02/15 16:32:22 warnes Exp $
 
 import os
 import re
