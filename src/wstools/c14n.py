@@ -334,7 +334,7 @@ class _implementation:
                 if inclusive or (in_subset and _in_subset(self.subset, a)):  # 020925 Test to see if attribute node in subset
                     xml_attrs_local[a.nodeName] = a  # 0426
             else:
-                if  _in_subset(self.subset, a):  # 020925 Test to see if attribute node in subset
+                if _in_subset(self.subset, a):  # 020925 Test to see if attribute node in subset
                     other_attrs.append(a)
 
 #                # TODO: exclusive, might need to define xmlns:prefix here

@@ -30,7 +30,7 @@ def _toUnicodeHex(x):
     hexval = hex(ord(x[0]))[2:]
     hexlen = len(hexval)
     # Make hexval have either 4 or 8 digits by prepending 0's
-    if   (hexlen == 1):
+    if (hexlen == 1):
         hexval = "000" + hexval
     elif (hexlen == 2):
         hexval = "00" + hexval

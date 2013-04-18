@@ -6,9 +6,6 @@ import os
 import re
 from setuptools import setup, find_packages
 
-__version__ = '0.4'
-
-
 url = "https://github.com/pycontribs/wstools.git"
 
 
@@ -21,17 +18,19 @@ long_description = """WSDL parsing services package for Web Services for Python.
     + read('README.txt')\
     + read('CHANGES.txt')\
 
+from src.wstools.version import __version__
 
 setup(
     name="wstools",
     version=__version__,
     description="wstools",
     maintainer="Gregory Warnes, kiorky, sorin",
-    maintainer_email="Gregory.R.Warnes@Pfizer.com, kiorky@cryptelium.net, sorin.sbarnea@gmail.com",
+    maintainer_email="Gregory.R.Warnes@Pfizer.com, kiorky@cryptelium.net, sorin.sbarnea+os@gmail.com",
     url=url,
     long_description=long_description,
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
-    install_requires=[]
+    install_requires=['utils'],
+    tests_require=['pytest', 'tox', 'utils'],
 )

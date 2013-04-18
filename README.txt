@@ -24,5 +24,5 @@ Authors
 
 Contributors
 -----------------
-
+- Sorin Sbarnea <sorin.sbarnea+os@gmail.com>
 
