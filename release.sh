@@ -21,24 +21,24 @@ autopep8 -i -r src/*.py
 # commented some errors temporarly, TODO: remove them and fix the code
 pep8 --max-line-length=180 --ignore=E502,E128,E123,E127,E125 src
 
+sleep 1
+
+git diff
 # Disallow unstaged changes in the working tree
-    if ! git diff-files --quiet --ignore-submodules --
+    if ! git diff-files --check --exit-code --ignore-submodules -- >&2
     then
         echo >&2 "error: you have unstaged changes."
-        git diff
-        git diff-files --color=auto --ignore-submodules -- >&2
+        #git diff-files --check --exit-code --ignore-submodules -- >&2
         exit 1
     fi
 
 # Disallow uncommitted changes in the index
-    if ! git diff-index --cached --quiet HEAD --ignore-submodules --
+    if ! git diff-index --cached --exit-code -r --ignore-submodules HEAD -- >&2
     then
         echo >&2 "error: your index contains uncommitted changes."
-        git diff-index --cached --name-status -r --ignore-submodules HEAD -- >&2
         exit 1
     fi
 
-git tag -a $VERSION -m "Version $VERSION"
 
 
 echo "Please don't run this as a user. This generates a new release for PyPI. Press ^C to exit or Enter to continue."
@@ -54,3 +54,9 @@ rm -rf build dist MANIFEST &> /dev/null
 #python setup.py register sdist build_sphinx upload upload_sphinx
 python setup.py register sdist upload
 
+git tag -f -a $VERSION -m "Version $VERSION"
+git tag -f -a RELEASE -m "Current RELEASE"
+
+git push origin --tags
+
+echo "done."
