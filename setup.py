@@ -30,5 +30,5 @@ setup(
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=[],
-    tests_require=['pytest', 'tox'],
+    tests_require=['virtualenv>=1.8.4','pytest'],
 )

@@ -5,7 +5,7 @@ set -e
 if which virtualenv >/dev/null; then
    echo
 else
-   apt-get install -y python-virtualenv
+   sudo easy_install "virtualenv>=1.8.4"
    if [ $? -ne 0 ]; then
       echo "failed to install virtualenv, you'll have to fix this yourself"
       exit 1
@@ -27,7 +27,7 @@ then
     exit 1
 fi
 
-#pip install tox -v
+pip install tox --upgrade -v
 # pytest pytest-cov
 
 tox -v
