@@ -29,6 +29,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
-    install_requires=['utils'],
-    tests_require=['pytest', 'tox', 'utils'],
+    install_requires=[],
+    tests_require=['pytest', 'tox'],
 )

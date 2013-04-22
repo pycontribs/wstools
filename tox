@@ -1,5 +1,18 @@
 #!/bin/bash
 set -e
+
+
+if which virtualenv >/dev/null; then
+   echo
+else
+   apt-get install -y python-virtualenv
+   if [ $? -ne 0 ]; then
+      echo "failed to install virtualenv, you'll have to fix this yourself"
+      exit 1
+   fi
+fi
+
+
 if [ -z "$VIRTUAL_ENV" ]
 then
     virtualenv .tox/tox
@@ -14,8 +27,8 @@ then
     exit 1
 fi
 
-pip install tox
+#pip install tox -v
 # pytest pytest-cov
 
-tox
+tox -v
 
