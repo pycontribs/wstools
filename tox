@@ -12,7 +12,6 @@ else
    fi
 fi
 
-
 if [ -z "$VIRTUAL_ENV" ]
 then
     virtualenv .tox/tox
@@ -27,8 +26,21 @@ then
     exit 1
 fi
 
-pip install tox --upgrade -v
+easy_install "tox>=1.3"
+#pip install tox --upgrade -v
 # pytest pytest-cov
 
-tox -v
+python setup.py check --restructuredtext  --strict
 
+autopep8 -i -r src/*.py
+
+# commented some errors temporarly, TODO: remove them and fix the code
+pep8 --max-line-length=180 --ignore=E502,E128,E123,E127,E125 src
+
+tox -v $@
+
+if [ $? -ne 0 ]; then
+echo "Error: tox returned error code $?"
+else
+echo "Done."
+fi

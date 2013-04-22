@@ -1,27 +1,22 @@
 #!/bin/bash
-set -e
+set -ex
 
 VERSION=$(python -c "from src.wstools.version import __version__ ; print __version__")
 echo Preparing to release version $VERSION
 
-pip install -q --upgrade pep8 autopep8
-#pip install -q --upgrade autopep8
 
+#source tox
+
+#pip install --upgrade pep8 autopep8 docutils
+
+echo === Testings ===
 if ! python setup.py test; then
 	echo "The test suite failed. Fix it!"
 	exit 1
 fi
 
+echo === Chechink that all changes are commited and pushed ===
 git pull -u
-
-python setup.py check --restructuredtext  --strict
-
-autopep8 -i -r src/*.py
-
-# commented some errors temporarly, TODO: remove them and fix the code
-pep8 --max-line-length=180 --ignore=E502,E128,E123,E127,E125 src
-
-sleep 1
 
 git diff
 # Disallow unstaged changes in the working tree
@@ -38,7 +33,6 @@ git diff
         echo >&2 "error: your index contains uncommitted changes."
         exit 1
     fi
-
 
 
 echo "Please don't run this as a user. This generates a new release for PyPI. Press ^C to exit or Enter to continue."

@@ -29,6 +29,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
-    install_requires=[],
-    tests_require=['virtualenv>=1.8.4','pytest'],
+    install_requires=['docutils'],
+    tests_require=['virtualenv>=1.8.4', 'pytest'],
 )
