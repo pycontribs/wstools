@@ -26,9 +26,8 @@ setup(
     maintainer_email="Gregory.R.Warnes@Pfizer.com, kiorky@cryptelium.net, sorin.sbarnea+os@gmail.com",
     url=url,
     long_description=long_description,
-    packages=find_packages('src'),
-    package_dir={'wstools': 'src/wstools'},
+    packages=['wstools'],
+    package_dir={'': 'src'},
     include_package_data=True,
     install_requires=['docutils'],
-    tests_require=['virtualenv', 'pytest'],
 )
