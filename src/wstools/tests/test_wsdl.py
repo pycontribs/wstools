@@ -31,7 +31,6 @@ def makeTestSuite(section='services_by_file'):
     return suite
 
 
-@unittest.skip("skipping due broken assets")
 class WSDLToolsTestCase(unittest.TestCase):
 
     def __init__(self, methodName='runTest'):
