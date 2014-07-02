@@ -21,23 +21,23 @@ archives = ('xmethods.tar.gz', 'schema.tar.gz')
 # SECTION [services_by_file] - all services locally available for
 #     testing.
 ##########################################################################
-[services_by_file]
-ogsi = schema/ogsi/ogsi_service.wsdl
-airport = xmethods/airport.wsdl
-distance = xmethods/Distance.wsdl
-freedb = xmethods/freedb.wsdl
-globalweather = xmethods/globalweather.wsdl
-IHaddock = xmethods/IHaddock.wsdl
-ip2geo = xmethods/ip2geo.wsdl
-magic = xmethods/magic.wsdl
-query = xmethods/query.wsdl
-RateInfo = xmethods/RateInfo.wsdl
-SHA1Encrypt = xmethods/SHA1Encrypt.wsdl
-siteInsepct = xmethods/siteInspect.wsdl
-TemperatureService = xmethods/TemperatureService.wsdl
-usweather = xmethods/usweather.wsdl
-zip2geo = xmethods/zip2geo.wsdl
-SolveSystem = xmethods/SolveSystem.wsdl.xml
+#[services_by_file]
+#ogsi = schema/ogsi/ogsi_service.wsdl
+#airport = xmethods/airport.wsdl
+#distance = xmethods/Distance.wsdl
+#freedb = xmethods/freedb.wsdl
+#globalweather = xmethods/globalweather.wsdl
+#IHaddock = xmethods/IHaddock.wsdl
+#ip2geo = xmethods/ip2geo.wsdl
+#magic = xmethods/magic.wsdl
+#query = xmethods/query.wsdl
+#RateInfo = xmethods/RateInfo.wsdl
+#SHA1Encrypt = xmethods/SHA1Encrypt.wsdl
+#siteInsepct = xmethods/siteInspect.wsdl
+#TemperatureService = xmethods/TemperatureService.wsdl
+#usweather = xmethods/usweather.wsdl
+#zip2geo = xmethods/zip2geo.wsdl
+#SolveSystem = xmethods/SolveSystem.wsdl.xml
 
 ##########################################################################
 # SECTION  [services_by_http]  - 
