@@ -21,7 +21,7 @@ archives = ('xmethods.tar.gz', 'schema.tar.gz')
 # SECTION [services_by_file] - all services locally available for
 #     testing.
 ##########################################################################
-#[services_by_file]
+[services_by_file]
 #ogsi = schema/ogsi/ogsi_service.wsdl
 #airport = xmethods/airport.wsdl
 #distance = xmethods/Distance.wsdl
@@ -36,7 +36,7 @@ archives = ('xmethods.tar.gz', 'schema.tar.gz')
 #siteInsepct = xmethods/siteInspect.wsdl
 #TemperatureService = xmethods/TemperatureService.wsdl
 #usweather = xmethods/usweather.wsdl
-#zip2geo = xmethods/zip2geo.wsdl
+zip2geo = xmethods/zip2geo.wsdl
 #SolveSystem = xmethods/SolveSystem.wsdl.xml
 
 ##########################################################################
