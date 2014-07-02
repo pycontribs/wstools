@@ -18,6 +18,14 @@ long_description = """WSDL parsing services package for Web Services for Python.
 
 from src.wstools.version import __version__
 
+install_requires = [
+    'docutils'
+]
+
+test_requires = [
+    'nose'
+]
+
 setup(
     name="wstools",
     version=__version__,
@@ -29,5 +37,6 @@ setup(
     packages=['wstools'],
     package_dir={'': 'src'},
     include_package_data=True,
-    install_requires=['docutils'],
+    install_requires=install_requires,
+    tests_require=test_requires,
 )
