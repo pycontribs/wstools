@@ -67,6 +67,8 @@ class WSDLToolsTestCase(unittest.TestCase):
 
     def test_all(self):
         try:
+            print "=>" + self.path
+            print "=>" + os.getcwd()
             if self.path[:7] == 'http://':
                 self.wsdl = WSDLReader().loadFromURL(self.path)
             else:
