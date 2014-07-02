@@ -67,12 +67,10 @@ class WSDLToolsTestCase(unittest.TestCase):
 
     def test_all(self):
         try:
-            print "=>" + self.path
-            print "=>" + os.getcwd()
             if self.path[:7] == 'http://':
                 self.wsdl = WSDLReader().loadFromURL(self.path)
             else:
-                self.wsdl = WSDLReader().loadFromFile(self.path)
+                self.wsdl = WSDLReader().loadFromFile('src/wstools/tests/' + self.path)
 
         except TimeoutError:
             print "connection timed out"
