@@ -27,7 +27,7 @@ setup(
     url=url,
     long_description=long_description,
     packages=find_packages('src'),
-    package_dir={'': 'src'},
+    package_dir={'wstools': 'src/wstools'},
     include_package_data=True,
     install_requires=['docutils'],
     tests_require=['virtualenv', 'pytest'],
