@@ -4,9 +4,10 @@
 ###########################################################################
 import unittest
 import test_wsdl
-import utils
 
 """
+import utils
+
 def makeTestSuite():
     suite = unittest.TestSuite()
     suite.addTest(test_wsdl.makeTestSuite("services_by_file"))
