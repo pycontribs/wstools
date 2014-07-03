@@ -13,8 +13,7 @@ from wstools.Utility import DOM
 from wstools.WSDLTools import WSDLReader
 from wstools.TimeoutSocket import TimeoutError
 
-from wstools import tests
-cwd = os.path.dirname(tests.__file__)
+cwd = 'tests'
 
 # that's for tox/pytest
 nameGenerator = None
