@@ -6,6 +6,7 @@ import unittest
 import test_wsdl
 import utils
 
+"""
 def makeTestSuite():
     suite = unittest.TestSuite()
     suite.addTest(test_wsdl.makeTestSuite("services_by_file"))
@@ -18,3 +19,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+"""
