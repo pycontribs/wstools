@@ -1029,7 +1029,7 @@ class XMLSchema(XMLSchemaComponent):
     empty_namespace = ''
     tag = 'schema'
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, logger=None):
         """parent --
            instance variables:
            targetNamespace -- schema's declared targetNamespace, or empty string.
@@ -1067,7 +1067,7 @@ class XMLSchema(XMLSchemaComponent):
         self._imported_schemas = {}
         self._included_schemas = {}
         self._base_url = None
-        self.logger = logging.getLogger('wstools')
+        self.logger = logger or logging.getLogger(__name__)
 
     def getNode(self):
         """

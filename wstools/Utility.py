@@ -108,8 +108,8 @@ class DOMException(Exception):
 
 class Base:
     """Base class for instance level Logging"""
-    def __init__(self, module=__name__):
-        self.logger = logging.getLogger('%s-%s(%s)' % (module, self.__class__, _get_idstr(self)))
+    def __init__(self, logger = None):
+        self.logger = logger or logging.getLogger(__name__)
 
 
 class HTTPResponse:
