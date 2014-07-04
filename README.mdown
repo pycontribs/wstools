@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/kartoch/wstools.svg?branch=master)](https://travis-ci.org/kartoch/wstools)[![Coverage Status](https://img.shields.io/coveralls/kartoch/wstools.svg)](https://coveralls.io/r/kartoch/wstools?branch=master)
+
 General
 ========
 - Homepage:	https://github.com/pycontribs/wstools
