@@ -12,8 +12,7 @@ def read(*rnames):
     ).read()
 
 long_description = \
-    "WSDL parsing services package for Web Services for Python. see" \
-    + url + read('README.mdown') + read('CHANGES.txt')
+    "WSDL parsing services package for Web Services for Python. see" + url
 
 from wstools.version import __version__
 
