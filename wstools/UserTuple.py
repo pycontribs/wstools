@@ -43,7 +43,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 # $Id$
-#XXX tuple instances (in Python 2.2) contain also:
+# XXX tuple instances (in Python 2.2) contain also:
 #   __class__, __delattr__, __getattribute__, __hash__, __new__,
 #   __reduce__, __setattr__, __str__
 # What about these?
