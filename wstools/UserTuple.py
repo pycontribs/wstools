@@ -3,7 +3,8 @@ A more or less complete user-defined wrapper around tuple objects.
 Adapted version of the standard library's UserList.
 
 Taken from Stefan Schwarzer's ftputil library, available at
-<http://www.ndh.net/home/sschwarzer/python/python_software.html>, and used under this license:
+<http://www.ndh.net/home/sschwarzer/python/python_software.html>,
+and used under this license:
 
 
 
