@@ -48,6 +48,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #   __reduce__, __setattr__, __str__
 # What about these?
 class UserTuple:
+
     def __init__(self, inittuple=None):
         self.data = ()
         if inittuple is not None:
