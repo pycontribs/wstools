@@ -86,36 +86,47 @@ class WSRF_V1_2:
     '''
 
     class LIFETIME:
-        XSD_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
-        XSD_DRAFT4 = "http://docs.oasis-open.org/wsrf/2004/11/wsrf-WS-ResourceLifetime-1.2-draft-04.xsd"
+        XSD_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/"
+        "wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
+        XSD_DRAFT4 = "http://docs.oasis-open.org/wsrf/2004/11/"
+        "wsrf-WS-ResourceLifetime-1.2-draft-04.xsd"
 
-        WSDL_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"
-        WSDL_DRAFT4 = "http://docs.oasis-open.org/wsrf/2004/11/wsrf-WS-ResourceLifetime-1.2-draft-04.wsdl"
+        WSDL_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/"
+        "wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"
+        WSDL_DRAFT4 = "http://docs.oasis-open.org/wsrf/2004/11/"
+        "wsrf-WS-ResourceLifetime-1.2-draft-04.wsdl"
         LATEST = WSDL_DRAFT4
         WSDL_LIST = (WSDL_DRAFT1, WSDL_DRAFT4)
         XSD_LIST = (XSD_DRAFT1, XSD_DRAFT4)
 
     class PROPERTIES:
-        XSD_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd"
-        XSD_DRAFT5 = "http://docs.oasis-open.org/wsrf/2004/11/wsrf-WS-ResourceProperties-1.2-draft-05.xsd"
+        XSD_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/"
+        "wsrf-WS-ResourceProperties-1.2-draft-01.xsd"
+        XSD_DRAFT5 = "http://docs.oasis-open.org/wsrf/2004/11/"
+        "wsrf-WS-ResourceProperties-1.2-draft-05.xsd"
 
-        WSDL_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"
-        WSDL_DRAFT5 = "http://docs.oasis-open.org/wsrf/2004/11/wsrf-WS-ResourceProperties-1.2-draft-05.wsdl"
+        WSDL_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/"
+        "wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"
+        WSDL_DRAFT5 = "http://docs.oasis-open.org/wsrf/2004/11/"
+        "wsrf-WS-ResourceProperties-1.2-draft-05.wsdl"
         LATEST = WSDL_DRAFT5
         WSDL_LIST = (WSDL_DRAFT1, WSDL_DRAFT5)
         XSD_LIST = (XSD_DRAFT1, XSD_DRAFT5)
 
     class BASENOTIFICATION:
-        XSD_DRAFT1 = "http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.xsd"
-
-        WSDL_DRAFT1 = "http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl"
+        XSD_DRAFT1 = "http://docs.oasis-open.org/wsn/2004/06/"
+        "wsn-WS-BaseNotification-1.2-draft-01.xsd"
+        WSDL_DRAFT1 = "http://docs.oasis-open.org/wsn/2004/06/"
+        "wsn-WS-BaseNotification-1.2-draft-01.wsdl"
         LATEST = WSDL_DRAFT1
         WSDL_LIST = (WSDL_DRAFT1,)
         XSD_LIST = (XSD_DRAFT1,)
 
     class BASEFAULTS:
-        XSD_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
-        XSD_DRAFT3 = "http://docs.oasis-open.org/wsrf/2004/11/wsrf-WS-BaseFaults-1.2-draft-03.xsd"
+        XSD_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/"
+        "wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+        XSD_DRAFT3 = "http://docs.oasis-open.org/wsrf/2004/11/"
+        "wsrf-WS-BaseFaults-1.2-draft-03.xsd"
         # LATEST = DRAFT3
         # WSDL_LIST = (WSDL_DRAFT1, WSDL_DRAFT3)
         XSD_LIST = (XSD_DRAFT1, XSD_DRAFT3)
@@ -127,16 +138,24 @@ WSRFLIST = (WSRF_V1_2,)
 class OASIS:
     '''URLs for Oasis specifications
     '''
-    WSSE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
-    UTILITY = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+    WSSE = "http://docs.oasis-open.org/wss/2004/01/"
+    "oasis-200401-wss-wssecurity-secext-1.0.xsd"
+    UTILITY = "http://docs.oasis-open.org/wss/2004/01/"
+    "oasis-200401-wss-wssecurity-utility-1.0.xsd"
 
     class X509TOKEN:
-        Base64Binary = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary"
-        STRTransform = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0"
-        PKCS7 = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#PKCS7"
-        X509 = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509"
-        X509PKIPathv1 = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509PKIPathv1"
-        X509v3SubjectKeyIdentifier = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3SubjectKeyIdentifier"
+        Base64Binary = "http://docs.oasis-open.org/wss/2004/01/"
+        "oasis-200401-wss-soap-message-security-1.0#Base64Binary"
+        STRTransform = "http://docs.oasis-open.org/wss/2004/01/"
+        "oasis-200401-wss-soap-message-security-1.0"
+        PKCS7 = "http://docs.oasis-open.org/wss/2004/01/"
+        "oasis-200401-wss-x509-token-profile-1.0#PKCS7"
+        X509 = "http://docs.oasis-open.org/wss/2004/01/"
+        "oasis-200401-wss-x509-token-profile-1.0#X509"
+        X509PKIPathv1 = "http://docs.oasis-open.org/wss/2004/01/"
+        "oasis-200401-wss-x509-token-profile-1.0#X509PKIPathv1"
+        X509v3SubjectKeyIdentifier = "http://docs.oasis-open.org/wss/2004/01/"
+        "oasis-200401-wss-x509-token-profile-1.0#X509v3SubjectKeyIdentifier"
 
     LIFETIME = WSRF_V1_2.LIFETIME.XSD_DRAFT1
     PROPERTIES = WSRF_V1_2.PROPERTIES.XSD_DRAFT1
