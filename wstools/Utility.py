@@ -665,7 +665,7 @@ class DOM:
 
         try:
             result = self.loadDocument(file)
-        except Exception, ex:
+        except Exception as ex:
             file.close()
             raise ParseError(('Failed to load document %s' % url,) + ex.args)
         else:
