@@ -554,7 +554,7 @@ class DOM:
             if nodetype == child.TEXT_NODE or \
                nodetype == child.CDATA_SECTION_NODE:
                 result.append(child.nodeValue)
-        value = ''.join(result)
+        value = result.join('')
         if preserve_ws is None:
             value = value.strip()
         return value
