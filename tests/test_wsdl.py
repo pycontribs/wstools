@@ -164,11 +164,3 @@ def setUpOptions(section):
 def getOption(cp, section):
     for name, value in cp.items(section):
         yield value
-
-
-def main():
-    unittest.main(defaultTest="makeTestSuite")
-
-
-if __name__ == "__main__":
-    main()
