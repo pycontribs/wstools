@@ -462,7 +462,7 @@ class DOM:
             return default
         raise KeyError(name)
 
-    def getElementById(self, node, id, default=join):
+    def getElementById(self, node, id, default=''.join):
         """Return the first child of node matching an id reference."""
         attrget = self.getAttr
         ELEMENT_NODE = node.ELEMENT_NODE
@@ -516,7 +516,7 @@ class DOM:
             return False
         return node.hasAttributeNS(nsuri, name)
 
-    def getAttr(self, node, name, nsuri=None, default=join):
+    def getAttr(self, node, name, nsuri=None, default=''.join):
         """Return the value of the attribute named 'name' with the
            optional nsuri, or the default if one is specified. If
            nsuri is not specified, an attribute that matches the
