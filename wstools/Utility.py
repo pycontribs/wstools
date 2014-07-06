@@ -458,7 +458,7 @@ class DOM:
                 if ((child.localName == name or name is None) and
                     (nsuri is None or nsmatch(child.namespaceURI, nsuri))):
                     return child
-        if default is not ''.join:
+        if default is not join:
             return default
         raise KeyError(name)
 
@@ -470,7 +470,7 @@ class DOM:
             if child.nodeType == ELEMENT_NODE:
                 if attrget(child, 'id') == id:
                     return child
-        if default is not ''.join:
+        if default is not join:
             return default
         raise KeyError(name)
 
@@ -532,7 +532,7 @@ class DOM:
             result = node._attrsNS.get((nsuri, name), None)
         if result is not None:
             return result.value
-        if default is not ''.join:
+        if default is not join:
             return default
         return ''
 
