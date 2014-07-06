@@ -14,8 +14,8 @@ def makeTestSuite():
     return suite
 
 
-def main():
+def test_runner():
     unittest.main(defaultTest="makeTestSuite")
 
 if __name__ == "__main__":
-    main()
+    test_runner()
