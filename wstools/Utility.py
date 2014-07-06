@@ -17,15 +17,20 @@ ident = "$Id$"
 
 import sys
 import types
-import httplib
-import urllib
+
 import socket
 import weakref
 from os.path import isfile
 from string import join, strip, split
 from UserDict import UserDict
-from cStringIO import StringIO
-from TimeoutSocket import TimeoutSocket, TimeoutError
+import urllib
+
+from .TimeoutSocket import TimeoutSocket, TimeoutError
+
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
 
 try:
     from urlparse import urlparse
@@ -36,6 +41,8 @@ try:
     from httplib import HTTPConnection, HTTPSConnection
 except ImportError:
     from http.client import HTTPConnection, HTTPSConnection
+
+
 
 from exceptions import Exception
 try:
