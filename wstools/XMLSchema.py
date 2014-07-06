@@ -22,7 +22,11 @@ import warnings
 import logging
 from Namespaces import SCHEMA, XMLNS, SOAP, APACHE
 from Utility import DOM, DOMException, Collection, SplitQName, basejoin
-from StringIO import StringIO
+
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
 
 # If we have no threading, this should be a no-op
 try:

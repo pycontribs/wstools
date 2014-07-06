@@ -21,7 +21,6 @@ import types
 import socket
 import weakref
 from os.path import isfile
-from string import join, strip, split
 from UserDict import UserDict
 import urllib
 
@@ -294,7 +293,7 @@ class DOM:
     def GetSOAPEnvUri(self, version):
         """Return the appropriate SOAP envelope uri for a given
            human-friendly SOAP version string (e.g. '1.1')."""
-        attrname = 'NS_SOAP_ENV_%s' % join(split(version, '.'), '_')
+        attrname = 'NS_SOAP_ENV_%s' % version.split('.').join('_')
         value = getattr(self, attrname, None)
         if value is not None:
             return value
@@ -305,7 +304,7 @@ class DOM:
     def GetSOAPEncUri(self, version):
         """Return the appropriate SOAP encoding uri for a given
            human-friendly SOAP version string (e.g. '1.1')."""
-        attrname = 'NS_SOAP_ENC_%s' % join(split(version, '.'), '_')
+        attrname = 'NS_SOAP_ENC_%s' % version.split('.').join('_')
         value = getattr(self, attrname, None)
         if value is not None:
             return value
@@ -316,7 +315,7 @@ class DOM:
     def GetSOAPActorNextUri(self, version):
         """Return the right special next-actor uri for a given
            human-friendly SOAP version string (e.g. '1.1')."""
-        attrname = 'SOAP_ACTOR_NEXT_%s' % join(split(version, '.'), '_')
+        attrname = 'SOAP_ACTOR_NEXT_%s' % version.split('.').join('_')
         value = getattr(self, attrname, None)
         if value is not None:
             return value
@@ -394,7 +393,7 @@ class DOM:
             )
 
     def GetWSDLUri(self, version):
-        attr = 'NS_WSDL_%s' % join(split(version, '.'), '_')
+        attr = 'NS_WSDL_%s' % version.split('.').join('_')
         value = getattr(self, attr, None)
         if value is not None:
             return value
@@ -403,7 +402,7 @@ class DOM:
             )
 
     def GetWSDLSoapBindingUri(self, version):
-        attr = 'NS_SOAP_BINDING_%s' % join(split(version, '.'), '_')
+        attr = 'NS_SOAP_BINDING_%s' % version.split('.').join('_')
         value = getattr(self, attr, None)
         if value is not None:
             return value
@@ -412,7 +411,7 @@ class DOM:
             )
 
     def GetWSDLHttpBindingUri(self, version):
-        attr = 'NS_HTTP_BINDING_%s' % join(split(version, '.'), '_')
+        attr = 'NS_HTTP_BINDING_%s' % version.split('.').join('_')
         value = getattr(self, attr, None)
         if value is not None:
             return value
@@ -421,7 +420,7 @@ class DOM:
             )
 
     def GetWSDLMimeBindingUri(self, version):
-        attr = 'NS_MIME_BINDING_%s' % join(split(version, '.'), '_')
+        attr = 'NS_MIME_BINDING_%s' % version.split('.').join('_')
         value = getattr(self, attr, None)
         if value is not None:
             return value
@@ -430,7 +429,7 @@ class DOM:
             )
 
     def GetWSDLHttpTransportUri(self, version):
-        attr = 'NS_SOAP_HTTP_%s' % join(split(version, '.'), '_')
+        attr = 'NS_SOAP_HTTP_%s' % version.split('.').join('_')
         value = getattr(self, attr, None)
         if value is not None:
             return value
@@ -555,9 +554,9 @@ class DOM:
             if nodetype == child.TEXT_NODE or \
                nodetype == child.CDATA_SECTION_NODE:
                 result.append(child.nodeValue)
-        value = join(result, '')
+        value = result.join('')
         if preserve_ws is None:
-            value = strip(value)
+            value = value.strip()
         return value
 
     def findNamespaceURI(self, prefix, node):
