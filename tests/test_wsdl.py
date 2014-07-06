@@ -27,14 +27,14 @@ def makeTestSuite(section='services_by_file'):
     suite = unittest.TestSuite()
     for i in range(0, numTests):
         case = WSDLToolsAbstractCase()
-        case.__test__ = true
+        case.__test__ = True
         suite.addTest(unittest.makeSuite(case, 'test_'))
     return suite
 
 
 class WSDLToolsAbstractCase(unittest.TestCase):
 
-    __test__ = false
+    __test__ = False
 
     def __init__(self, methodName='runTest'):
         unittest.TestCase.__init__(self, methodName)
