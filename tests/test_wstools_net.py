@@ -15,7 +15,8 @@ def makeTestSuite():
 
 
 def test_runner():
-    unittest.main(defaultTest="makeTestSuite")
+    runner = unittest.TextTestRunner()
+    runner.run(makeTestSuite())
 
 if __name__ == "__main__":
     test_runner()
