@@ -863,7 +863,7 @@ class ElementProxy(Base, MessageInterface):
             prefix = 'ns%d' % self._indx
             try:
                 self._dom.findNamespaceURI(prefix, self._getNode())
-            except DOMException, ex:
+            except DOMException as ex:
                 break
         return prefix
 
@@ -877,7 +877,7 @@ class ElementProxy(Base, MessageInterface):
             if node and (node.nodeType == node.ELEMENT_NODE) and \
                     (nsuri == self._dom.findDefaultNS(node)):
                 return None
-        except DOMException, ex:
+        except DOMException as ex:
             pass
         if nsuri == XMLNS.XML:
             return self._xml_prefix
@@ -928,7 +928,7 @@ class ElementProxy(Base, MessageInterface):
     def getPrefix(self, namespaceURI):
         try:
             prefix = self._getPrefix(node=self.node, nsuri=namespaceURI)
-        except NamespaceError, ex:
+        except NamespaceError as ex:
             prefix = self._getUniquePrefix()
             self.setNamespaceAttribute(prefix, namespaceURI)
         return prefix
@@ -1025,7 +1025,7 @@ class ElementProxy(Base, MessageInterface):
         if namespaceURI:
             try:
                 prefix = self.getPrefix(namespaceURI)
-            except KeyError, ex:
+            except KeyError as ex:
                 prefix = 'ns2'
                 self.setNamespaceAttribute(prefix, namespaceURI)
         qualifiedName = localName
