@@ -448,7 +448,7 @@ class DOM:
         return node.localName == name and \
             (nsuri is None or self.nsUriMatch(node.namespaceURI, nsuri))
 
-    def getElement(self, node, name, nsuri=None, default=join):
+    def getElement(self, node, name, nsuri=None, default=''.join):
         """Return the first child of node with a matching name and
            namespace uri, or the default if one is provided."""
         nsmatch = self.nsUriMatch
