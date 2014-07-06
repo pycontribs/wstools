@@ -26,11 +26,15 @@ def makeTestSuite(section='services_by_file'):
     nameGenerator = getOption(cp, section)
     suite = unittest.TestSuite()
     for i in range(0, numTests):
-        suite.addTest(unittest.makeSuite(WSDLToolsAbstractCase, 'test_'))
+        case = WSDLToolsAbstractCase()
+        case.__test__ = true
+        suite.addTest(unittest.makeSuite(case, 'test_'))
     return suite
 
 
-class WSDLToolsAbstractCase():
+class WSDLToolsAbstractCase(unittest.TestCase):
+
+    __test__ = false
 
     def __init__(self, methodName='runTest'):
         unittest.TestCase.__init__(self, methodName)
