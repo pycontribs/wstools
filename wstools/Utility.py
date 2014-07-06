@@ -26,8 +26,17 @@ from string import join, strip, split
 from UserDict import UserDict
 from cStringIO import StringIO
 from TimeoutSocket import TimeoutSocket, TimeoutError
-from urlparse import urlparse
-from httplib import HTTPConnection, HTTPSConnection
+
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
+
+try:
+    from httplib import HTTPConnection, HTTPSConnection
+except ImportError:
+    from http.client import HTTPConnection, HTTPSConnection
+
 from exceptions import Exception
 try:
     from ZSI import _get_idstr
