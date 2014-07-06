@@ -15,9 +15,9 @@ try:
 except ImportError:
     from cStringIO import StringIO
 
-from Namespaces import OASIS, XMLNS, WSA, WSA_LIST, WSAW_LIST, WSRF_V1_2, WSRF
-from Utility import Collection, CollectionNS, DOM, ElementProxy, basejoin
-from XMLSchema import XMLSchema, SchemaReader, WSDLToolsAdapter
+from .Namespaces import OASIS, XMLNS, WSA, WSA_LIST, WSAW_LIST, WSRF_V1_2, WSRF
+from .Utility import Collection, CollectionNS, DOM, ElementProxy, basejoin
+from .XMLSchema import XMLSchema, SchemaReader, WSDLToolsAdapter
 
 
 class WSDLReader:
