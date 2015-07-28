@@ -15,7 +15,6 @@
 
 ident = "$Id$"
 
-import string
 import socket
 import select
 import errno
@@ -24,7 +23,10 @@ WSAEINVAL = getattr(errno, 'WSAEINVAL', 10022)
 
 
 class TimeoutSocket:
-    """A socket imposter that supports timeout limits."""
+
+    """
+    A socket imposter that supports timeout limits.
+    """
 
     def __init__(self, timeout=20, sock=None):
         self.timeout = float(timeout)
@@ -57,9 +59,8 @@ class TimeoutSocket:
                 code = 0
             else:
                 code, why = why
-            if code not in (
-                errno.EINPROGRESS, errno.EALREADY, errno.EWOULDBLOCK
-                ):
+            if code not in \
+                    (errno.EINPROGRESS, errno.EALREADY, errno.EWOULDBLOCK):
                 raise
             r, w, e = select.select([], [sock], [], timeout)
             if w:

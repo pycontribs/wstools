@@ -17,17 +17,33 @@ ident = "$Id$"
 
 import sys
 import types
-import httplib
-import urllib
+
 import socket
 import weakref
 from os.path import isfile
 from string import join, strip, split
 from UserDict import UserDict
-from cStringIO import StringIO
-from TimeoutSocket import TimeoutSocket, TimeoutError
-from urlparse import urlparse
-from httplib import HTTPConnection, HTTPSConnection
+import urllib
+
+from .TimeoutSocket import TimeoutSocket, TimeoutError
+
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
+
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
+
+try:
+    from httplib import HTTPConnection, HTTPSConnection
+except ImportError:
+    from http.client import HTTPConnection, HTTPSConnection
+
+
+
 from exceptions import Exception
 try:
     from ZSI import _get_idstr
@@ -91,28 +107,35 @@ if sys.version_info[0:2] < (2, 4, 0, 'final', 0)[0:2]:
 
 
 class NamespaceError(Exception):
+
     """Used to indicate a Namespace Error."""
 
 
 class RecursionError(Exception):
+
     """Used to indicate a HTTP redirect recursion."""
 
 
 class ParseError(Exception):
+
     """Used to indicate a XML parsing error."""
 
 
 class DOMException(Exception):
+
     """Used to indicate a problem processing DOM."""
 
 
 class Base:
+
     """Base class for instance level Logging"""
-    def __init__(self, module=__name__):
-        self.logger = logging.getLogger('%s-%s(%s)' % (module, self.__class__, _get_idstr(self)))
+
+    def __init__(self, logger=None):
+        self.logger = logger or logging.getLogger(__name__)
 
 
 class HTTPResponse:
+
     """Captures the information in an HTTP response message."""
 
     def __init__(self, response):
@@ -124,7 +147,9 @@ class HTTPResponse:
 
 
 class TimeoutHTTP(HTTPConnection):
+
     """A custom http connection object that supports socket timeout."""
+
     def __init__(self, host, port=None, timeout=20):
         HTTPConnection.__init__(self, host, port)
         self.timeout = timeout
@@ -135,12 +160,14 @@ class TimeoutHTTP(HTTPConnection):
 
 
 class TimeoutHTTPS(HTTPSConnection):
+
     """A custom https object that supports socket timeout. Note that this
        is not really complete. The builtin SSL support in the Python socket
        module requires a real socket (type) to be passed in to be hooked to
        SSL. That means our fake socket won't work and our timeout hacks are
        bypassed for send and recv calls. Since our hack _is_ in place at
        connect() time, it should at least provide some timeout protection."""
+
     def __init__(self, host, port=None, timeout=20, **kwargs):
         HTTPSConnection.__init__(self, str(host), port, **kwargs)
         self.timeout = timeout
@@ -224,15 +251,16 @@ def urlopen(url, timeout=20, redirects=None):
 
 
 class DOM:
+
     """The DOM singleton defines a number of XML related constants and
        provides a number of utility methods for DOM related tasks. It
        also provides some basic abstractions so that the rest of the
        package need not care about actual DOM implementation in use."""
 
-    looseNamespaces = False  # if can't find a referenced namespace, try the default one
+    # if can't find a referenced namespace, try the default one
+    looseNamespaces = False
 
     # Namespace stuff related to the SOAP specification.
-
     NS_SOAP_ENV_1_1 = 'http://schemas.xmlsoap.org/soap/envelope/'
     NS_SOAP_ENC_1_1 = 'http://schemas.xmlsoap.org/soap/encoding/'
 
@@ -419,7 +447,7 @@ class DOM:
         if node.nodeType != node.ELEMENT_NODE:
             return 0
         return node.localName == name and \
-               (nsuri is None or self.nsUriMatch(node.namespaceURI, nsuri))
+            (nsuri is None or self.nsUriMatch(node.namespaceURI, nsuri))
 
     def getElement(self, node, name, nsuri=None, default=join):
         """Return the first child of node with a matching name and
@@ -429,8 +457,7 @@ class DOM:
         for child in node.childNodes:
             if child.nodeType == ELEMENT_NODE:
                 if ((child.localName == name or name is None) and
-                    (nsuri is None or nsmatch(child.namespaceURI, nsuri))
-                    ):
+                    (nsuri is None or nsmatch(child.namespaceURI, nsuri))):
                     return child
         if default is not join:
             return default
@@ -555,7 +582,8 @@ class DOM:
                 if DOM.looseNamespaces:
                     return self.findTargetNS(orig_node)
                 else:
-                    raise DOMException('Value for prefix %s not found.' % prefix)
+                    raise DOMException('Value for prefix %s not found.'
+                                       % prefix)
 
     def findDefaultNS(self, node):
         """Return the current default namespace uri for the given node."""
@@ -653,7 +681,7 @@ class DOM:
 
         try:
             result = self.loadDocument(file)
-        except Exception, ex:
+        except Exception as ex:
             file.close()
             raise ParseError(('Failed to load document %s' % url,) + ex.args)
         else:
@@ -664,9 +692,11 @@ DOM = DOM()
 
 
 class MessageInterface:
+
     '''Higher Level Interface, delegates to DOM singleton, must
     be subclassed and implement all methods that throw NotImplementedError.
     '''
+
     def __init__(self, sw):
         '''Constructor, May be extended, do not override.
             sw -- soapWriter instance
@@ -725,8 +755,7 @@ class MessageInterface:
 
 
 class ElementProxy(Base, MessageInterface):
-    '''
-    '''
+
     _soap_env_prefix = 'SOAP-ENV'
     _soap_enc_prefix = 'SOAP-ENC'
     _zsi_prefix = 'ZSI'
@@ -743,11 +772,11 @@ class ElementProxy(Base, MessageInterface):
     _xml_nsuri = XMLNS.XML
     _xmlns_nsuri = XMLNS.BASE
 
-    standard_ns = {\
+    standard_ns = {
         _xml_prefix: _xml_nsuri,
         _xmlns_prefix: _xmlns_nsuri
     }
-    reserved_ns = {\
+    reserved_ns = {
         _soap_env_prefix: _soap_env_nsuri,
         _soap_enc_prefix: _soap_enc_nsuri,
         _zsi_prefix: _zsi_nsuri,
@@ -783,9 +812,11 @@ class ElementProxy(Base, MessageInterface):
         '''
         from Ft.Xml import XPath
         if not processorNss:
-            context = XPath.Context.Context(self.node, processorNss=self.processorNss)
+            context = XPath.Context.Context(self.node,
+                                            processorNss=self.processorNss)
         else:
-            context = XPath.Context.Context(self.node, processorNss=processorNss)
+            context = XPath.Context.Context(self.node,
+                                            processorNss=processorNss)
         nodes = expression.evaluate(context)
         return map(lambda node: ElementProxy(self.sw, node), nodes)
 
@@ -804,7 +835,8 @@ class ElementProxy(Base, MessageInterface):
         if localName and self.node:
             check = self._dom.isElement(self.node, localName, namespaceURI)
         if not check:
-            raise NamespaceError('unexpected node type %s, expecting %s' % (self.node, localName))
+            raise NamespaceError('unexpected node type %s, expecting %s'
+                                 % (self.node, localName))
 
     def setNode(self, node=None):
         if node:
@@ -813,13 +845,15 @@ class ElementProxy(Base, MessageInterface):
             else:
                 self.node = node
         elif self.node:
-            node = self._dom.getElement(self.node, self.name, self.namespaceURI, default=None)
+            node = self._dom.getElement(self.node, self.name,
+                                        self.namespaceURI, default=None)
             if not node:
-                raise NamespaceError('cant find element (%s, %s)' % (self.namespaceURI, self.name))
+                raise NamespaceError('cant find element (%s, %s)' %
+                                     (self.namespaceURI, self.name))
             self.node = node
         else:
-            #self.node = self._dom.create(self.node, self.name, self.namespaceURI, default=None)
-            self.createDocument(self.namespaceURI, localName=self.name, doctype=None)
+            self.createDocument(self.namespaceURI, localName=self.name,
+                                doctype=None)
 
         self.checkNode()
 
@@ -845,7 +879,7 @@ class ElementProxy(Base, MessageInterface):
             prefix = 'ns%d' % self._indx
             try:
                 self._dom.findNamespaceURI(prefix, self._getNode())
-            except DOMException, ex:
+            except DOMException as ex:
                 break
         return prefix
 
@@ -857,9 +891,9 @@ class ElementProxy(Base, MessageInterface):
         '''
         try:
             if node and (node.nodeType == node.ELEMENT_NODE) and \
-                (nsuri == self._dom.findDefaultNS(node)):
+                    (nsuri == self._dom.findDefaultNS(node)):
                 return None
-        except DOMException, ex:
+        except DOMException as ex:
             pass
         if nsuri == XMLNS.XML:
             return self._xml_prefix
@@ -910,7 +944,7 @@ class ElementProxy(Base, MessageInterface):
     def getPrefix(self, namespaceURI):
         try:
             prefix = self._getPrefix(node=self.node, nsuri=namespaceURI)
-        except NamespaceError, ex:
+        except NamespaceError as ex:
             prefix = self._getUniquePrefix()
             self.setNamespaceAttribute(prefix, namespaceURI)
         return prefix
@@ -942,7 +976,8 @@ class ElementProxy(Base, MessageInterface):
         return self.canonicalize()
 
     def createDocument(self, namespaceURI, localName, doctype=None):
-        '''If specified must be a SOAP envelope, else may contruct an empty document.
+        '''If specified must be a SOAP envelope, else may contruct an empty
+        document.
         '''
         prefix = self._soap_env_prefix
 
@@ -952,22 +987,27 @@ class ElementProxy(Base, MessageInterface):
             self.node = self._dom.createDocument(None, None, None)
             return
         else:
-            raise KeyError('only support creation of document in %s' % self.reserved_ns[prefix])
+            raise KeyError('only support creation of document in %s' %
+                           self.reserved_ns[prefix])
 
-        document = self._dom.createDocument(nsuri=namespaceURI, qname=qualifiedName, doctype=doctype)
+        document = self._dom.createDocument(nsuri=namespaceURI,
+                                            qname=qualifiedName,
+                                            doctype=doctype)
         self.node = document.childNodes[0]
 
         #set up reserved namespace attributes
         for prefix, nsuri in self.reserved_ns.items():
             self._setAttributeNS(namespaceURI=self._xmlns_nsuri,
-                qualifiedName='%s:%s' % (self._xmlns_prefix, prefix),
-                value=nsuri)
+                                 qualifiedName='%s:%s' % (self._xmlns_prefix,
+                                                          prefix),
+                                 value=nsuri)
 
     #############################################
     #Methods for attributes
     #############################################
     def hasAttribute(self, namespaceURI, localName):
-        return self._dom.hasAttr(self._getNode(), name=localName, nsuri=namespaceURI)
+        return self._dom.hasAttr(self._getNode(), name=localName,
+                                 nsuri=namespaceURI)
 
     def setAttributeType(self, namespaceURI, localName):
         '''set xsi:type
@@ -1001,7 +1041,7 @@ class ElementProxy(Base, MessageInterface):
         if namespaceURI:
             try:
                 prefix = self.getPrefix(namespaceURI)
-            except KeyError, ex:
+            except KeyError as ex:
                 prefix = 'ns2'
                 self.setNamespaceAttribute(prefix, namespaceURI)
         qualifiedName = localName
@@ -1074,7 +1114,8 @@ class ElementProxy(Base, MessageInterface):
         if prefix:
             qualifiedName = '%s:%s' % (prefix, localName)
         node = self.createElementNS(namespaceURI, qualifiedName)
-        self._insertBefore(newChild=node._getNode(), refChild=refChild._getNode())
+        self._insertBefore(newChild=node._getNode(),
+                           refChild=refChild._getNode())
         return node
 
     def getElement(self, namespaceURI, localName):
@@ -1083,7 +1124,8 @@ class ElementProxy(Base, MessageInterface):
             namespaceURI -- namespace of element
             localName -- local name of element
         '''
-        node = self._dom.getElement(self.node, localName, namespaceURI, default=None)
+        node = self._dom.getElement(self.node, localName, namespaceURI,
+                                    default=None)
         if node:
             return ElementProxy(self.sw, node)
         return None
@@ -1137,6 +1179,7 @@ class ElementProxy(Base, MessageInterface):
 
 
 class Collection(UserDict):
+
     """Helper class for maintaining ordered named collections."""
     default = lambda self, k: k.name
 
@@ -1147,7 +1190,8 @@ class Collection(UserDict):
         self._func = key or self.default
 
     def __getitem__(self, key):
-        NumberTypes = (types.IntType, types.LongType, types.FloatType, types.ComplexType)
+        NumberTypes = (types.IntType, types.LongType, types.FloatType,
+                       types.ComplexType)
         if isinstance(key, NumberTypes):
             return self.list[key]
         return self.data[key]
@@ -1168,7 +1212,9 @@ class Collection(UserDict):
 
 
 class CollectionNS(UserDict):
+
     """Helper class for maintaining ordered named collections."""
+
     default = lambda self, k: k.name
 
     def __init__(self, parent, key=None):
@@ -1190,18 +1236,21 @@ class CollectionNS(UserDict):
     def __setitem__(self, key, item):
         item.parent = weakref.ref(self)
         self.list.append(item)
-        targetNamespace = getattr(item, 'targetNamespace', self.parent().targetNamespace)
+        targetNamespace = getattr(item, 'targetNamespace',
+                                  self.parent().targetNamespace)
         if not targetNamespace in self.data:
             self.data[targetNamespace] = {}
         self.data[targetNamespace][key] = item
 
     def __isSequence(self, key):
-        return (type(key) in (types.TupleType, types.ListType) and len(key) == 2)
+        return (type(key) in (types.TupleType, types.ListType)
+                and len(key) == 2)
 
     def keys(self):
         keys = []
         for tns in self.data.keys():
-            keys.append(map(lambda i: (tns, self._func(i)), self.data[tns].values()))
+            keys.append(map(lambda i: (tns, self._func(i)),
+                            self.data[tns].values()))
         return keys
 
     def items(self):
@@ -1294,8 +1343,10 @@ if 1:
 # prefixed attribute names during cloning.
 #
 # key (attr.namespaceURI, tag)
-# ('http://www.w3.org/2000/xmlns/', u'xsd')   <xml.dom.minidom.Attr instance at 0x82227c4>
-# ('http://www.w3.org/2000/xmlns/', 'xmlns')   <xml.dom.minidom.Attr instance at 0x8414b3c>
+# ('http://www.w3.org/2000/xmlns/', u'xsd')
+#                <xml.dom.minidom.Attr instance at 0x82227c4>
+# ('http://www.w3.org/2000/xmlns/', 'xmlns')
+#                <xml.dom.minidom.Attr instance at 0x8414b3c>
 #
 # xml.dom.minidom.Attr.nodeName = xmlns:xsd
 # xml.dom.minidom.Attr.value =  = http://www.w3.org/2001/XMLSchema
@@ -1314,7 +1365,8 @@ if 1:
             clone = newOwnerDocument.createElementNS(node.namespaceURI,
                                                      node.nodeName)
             for attr in node.attributes.values():
-                clone.setAttributeNS(attr.namespaceURI, attr.nodeName, attr.value)
+                clone.setAttributeNS(attr.namespaceURI, attr.nodeName,
+                                     attr.value)
 
                 prefix, tag = xml.dom.minidom._nssplit(attr.nodeName)
                 if prefix == 'xmlns':
@@ -1322,18 +1374,21 @@ if 1:
                 elif prefix:
                     a = clone.getAttributeNodeNS(attr.namespaceURI, tag)
                 else:
-                    a = clone.getAttributeNodeNS(attr.namespaceURI, attr.nodeName)
+                    a = clone.getAttributeNodeNS(attr.namespaceURI,
+                                                 attr.nodeName)
                 a.specified = attr.specified
 
             if deep:
                 for child in node.childNodes:
-                    c = xml.dom.minidom._clone_node(child, deep, newOwnerDocument)
+                    c = xml.dom.minidom._clone_node(child, deep,
+                                                    newOwnerDocument)
                     clone.appendChild(c)
         elif node.nodeType == xml.dom.minidom.Node.DOCUMENT_FRAGMENT_NODE:
             clone = newOwnerDocument.createDocumentFragment()
             if deep:
                 for child in node.childNodes:
-                    c = xml.dom.minidom._clone_node(child, deep, newOwnerDocument)
+                    c = xml.dom.minidom._clone_node(child, deep,
+                                                    newOwnerDocument)
                     clone.appendChild(c)
 
         elif node.nodeType == xml.dom.minidom.Node.TEXT_NODE:
@@ -1360,14 +1415,16 @@ if 1:
                 clone.entities._seq = []
                 clone.notations._seq = []
                 for n in node.notations._seq:
-                    notation = xml.dom.minidom.Notation(n.nodeName, n.publicId, n.systemId)
+                    notation = xml.dom.minidom.Notation(n.nodeName, n.publicId,
+                                                        n.systemId)
                     notation.ownerDocument = newOwnerDocument
                     clone.notations._seq.append(notation)
                     if hasattr(n, '_call_user_data_handler'):
                         n._call_user_data_handler(operation, n, notation)
                 for e in node.entities._seq:
-                    entity = xml.dom.minidom.Entity(e.nodeName, e.publicId, e.systemId,
-                                    e.notationName)
+                    entity = xml.dom.minidom.Entity(e.nodeName, e.publicId,
+                                                    e.systemId,
+                                                    e.notationName)
                     entity.actualEncoding = e.actualEncoding
                     entity.encoding = e.encoding
                     entity.version = e.version

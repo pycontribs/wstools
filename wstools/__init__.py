@@ -3,6 +3,5 @@
 
 ident = "$Id$"
 
-import WSDLTools
-import XMLname
-import logging
+from . import WSDLTools
+from . import XMLname

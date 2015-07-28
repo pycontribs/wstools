@@ -46,7 +46,8 @@ except:
     class DSIG:
         BASE = "http://www.w3.org/2000/09/xmldsig#"
         C14N = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315"
-        C14N_COMM = "http://www.w3.org/TR/2000/CR-xml-c14n-20010315#WithComments"
+        C14N_COMM = \
+            "http://www.w3.org/TR/2000/CR-xml-c14n-20010315#WithComments"
         C14N_EXCL = "http://www.w3.org/2001/10/xml-exc-c14n#"
         DIGEST_MD2 = "http://www.w3.org/2000/09/xmldsig#md2"
         DIGEST_MD5 = "http://www.w3.org/2000/09/xmldsig#md5"
@@ -79,41 +80,55 @@ except:
 
 
 class WSRF_V1_2:
-    '''OASIS WSRF Specifications Version 1.2
-    '''
-    class LIFETIME:
-        XSD_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
-        XSD_DRAFT4 = "http://docs.oasis-open.org/wsrf/2004/11/wsrf-WS-ResourceLifetime-1.2-draft-04.xsd"
 
-        WSDL_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"
-        WSDL_DRAFT4 = "http://docs.oasis-open.org/wsrf/2004/11/wsrf-WS-ResourceLifetime-1.2-draft-04.wsdl"
+    '''
+    OASIS WSRF Specifications Version 1.2
+    '''
+
+    class LIFETIME:
+        XSD_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/"
+        "wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
+        XSD_DRAFT4 = "http://docs.oasis-open.org/wsrf/2004/11/"
+        "wsrf-WS-ResourceLifetime-1.2-draft-04.xsd"
+
+        WSDL_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/"
+        "wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"
+        WSDL_DRAFT4 = "http://docs.oasis-open.org/wsrf/2004/11/"
+        "wsrf-WS-ResourceLifetime-1.2-draft-04.wsdl"
         LATEST = WSDL_DRAFT4
         WSDL_LIST = (WSDL_DRAFT1, WSDL_DRAFT4)
         XSD_LIST = (XSD_DRAFT1, XSD_DRAFT4)
 
     class PROPERTIES:
-        XSD_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd"
-        XSD_DRAFT5 = "http://docs.oasis-open.org/wsrf/2004/11/wsrf-WS-ResourceProperties-1.2-draft-05.xsd"
+        XSD_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/"
+        "wsrf-WS-ResourceProperties-1.2-draft-01.xsd"
+        XSD_DRAFT5 = "http://docs.oasis-open.org/wsrf/2004/11/"
+        "wsrf-WS-ResourceProperties-1.2-draft-05.xsd"
 
-        WSDL_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"
-        WSDL_DRAFT5 = "http://docs.oasis-open.org/wsrf/2004/11/wsrf-WS-ResourceProperties-1.2-draft-05.wsdl"
+        WSDL_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/"
+        "wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"
+        WSDL_DRAFT5 = "http://docs.oasis-open.org/wsrf/2004/11/"
+        "wsrf-WS-ResourceProperties-1.2-draft-05.wsdl"
         LATEST = WSDL_DRAFT5
         WSDL_LIST = (WSDL_DRAFT1, WSDL_DRAFT5)
         XSD_LIST = (XSD_DRAFT1, XSD_DRAFT5)
 
     class BASENOTIFICATION:
-        XSD_DRAFT1 = "http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.xsd"
-
-        WSDL_DRAFT1 = "http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl"
+        XSD_DRAFT1 = "http://docs.oasis-open.org/wsn/2004/06/"
+        "wsn-WS-BaseNotification-1.2-draft-01.xsd"
+        WSDL_DRAFT1 = "http://docs.oasis-open.org/wsn/2004/06/"
+        "wsn-WS-BaseNotification-1.2-draft-01.wsdl"
         LATEST = WSDL_DRAFT1
         WSDL_LIST = (WSDL_DRAFT1,)
         XSD_LIST = (XSD_DRAFT1,)
 
     class BASEFAULTS:
-        XSD_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
-        XSD_DRAFT3 = "http://docs.oasis-open.org/wsrf/2004/11/wsrf-WS-BaseFaults-1.2-draft-03.xsd"
-        #LATEST = DRAFT3
-        #WSDL_LIST = (WSDL_DRAFT1, WSDL_DRAFT3)
+        XSD_DRAFT1 = "http://docs.oasis-open.org/wsrf/2004/06/"
+        "wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+        XSD_DRAFT3 = "http://docs.oasis-open.org/wsrf/2004/11/"
+        "wsrf-WS-BaseFaults-1.2-draft-03.xsd"
+        # LATEST = DRAFT3
+        # WSDL_LIST = (WSDL_DRAFT1, WSDL_DRAFT3)
         XSD_LIST = (XSD_DRAFT1, XSD_DRAFT3)
 
 WSRF = WSRF_V1_2
@@ -123,16 +138,24 @@ WSRFLIST = (WSRF_V1_2,)
 class OASIS:
     '''URLs for Oasis specifications
     '''
-    WSSE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
-    UTILITY = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+    WSSE = "http://docs.oasis-open.org/wss/2004/01/"
+    "oasis-200401-wss-wssecurity-secext-1.0.xsd"
+    UTILITY = "http://docs.oasis-open.org/wss/2004/01/"
+    "oasis-200401-wss-wssecurity-utility-1.0.xsd"
 
     class X509TOKEN:
-        Base64Binary = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary"
-        STRTransform = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0"
-        PKCS7 = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#PKCS7"
-        X509 = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509"
-        X509PKIPathv1 = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509PKIPathv1"
-        X509v3SubjectKeyIdentifier = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3SubjectKeyIdentifier"
+        Base64Binary = "http://docs.oasis-open.org/wss/2004/01/"
+        "oasis-200401-wss-soap-message-security-1.0#Base64Binary"
+        STRTransform = "http://docs.oasis-open.org/wss/2004/01/"
+        "oasis-200401-wss-soap-message-security-1.0"
+        PKCS7 = "http://docs.oasis-open.org/wss/2004/01/"
+        "oasis-200401-wss-x509-token-profile-1.0#PKCS7"
+        X509 = "http://docs.oasis-open.org/wss/2004/01/"
+        "oasis-200401-wss-x509-token-profile-1.0#X509"
+        X509PKIPathv1 = "http://docs.oasis-open.org/wss/2004/01/"
+        "oasis-200401-wss-x509-token-profile-1.0#X509PKIPathv1"
+        X509v3SubjectKeyIdentifier = "http://docs.oasis-open.org/wss/2004/01/"
+        "oasis-200401-wss-x509-token-profile-1.0#X509v3SubjectKeyIdentifier"
 
     LIFETIME = WSRF_V1_2.LIFETIME.XSD_DRAFT1
     PROPERTIES = WSRF_V1_2.PROPERTIES.XSD_DRAFT1
@@ -141,8 +164,9 @@ class OASIS:
 
 
 class APACHE:
-    '''This name space is defined by AXIS and it is used for the TC in TCapache.py,
-    Map and file attachment (DataHandler)
+    '''
+    This name space is defined by AXIS and it is used for the TC in
+    TCapache.py, Map and file attachment (DataHandler)
     '''
     AXIS_NS = "http://xml.apache.org/xml-soap"
 
@@ -163,8 +187,10 @@ class WSU:
 
 
 class WSR:
-    PROPERTIES = "http://www.ibm.com/xmlns/stdwip/web-services/WS-ResourceProperties"
-    LIFETIME = "http://www.ibm.com/xmlns/stdwip/web-services/WS-ResourceLifetime"
+    PROPERTIES = \
+        "http://www.ibm.com/xmlns/stdwip/web-services/WS-ResourceProperties"
+    LIFETIME = \
+        "http://www.ibm.com/xmlns/stdwip/web-services/WS-ResourceLifetime"
 
 
 class WSA200508:
@@ -196,7 +222,9 @@ WSA_LIST = (WSA200508, WSA200408, WSA200403, WSA200303)
 
 
 class _WSAW(str):
-    """ Define ADDRESS attribute to be compatible with WSA* layout """
+    """
+    Define ADDRESS attribute to be compatible with WSA* layout
+    """
     ADDRESS = property(lambda s: s)
 
 WSAW200605 = _WSAW("http://www.w3.org/2006/05/addressing/wsdl")

@@ -3,7 +3,8 @@ A more or less complete user-defined wrapper around tuple objects.
 Adapted version of the standard library's UserList.
 
 Taken from Stefan Schwarzer's ftputil library, available at
-<http://www.ndh.net/home/sschwarzer/python/python_software.html>, and used under this license:
+<http://www.ndh.net/home/sschwarzer/python/python_software.html>,
+and used under this license:
 
 
 
@@ -43,11 +44,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 # $Id$
-#XXX tuple instances (in Python 2.2) contain also:
+# XXX tuple instances (in Python 2.2) contain also:
 #   __class__, __delattr__, __getattribute__, __hash__, __new__,
 #   __reduce__, __setattr__, __str__
 # What about these?
 class UserTuple:
+
     def __init__(self, inittuple=None):
         self.data = ()
         if inittuple is not None:

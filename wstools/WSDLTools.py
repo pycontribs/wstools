@@ -10,10 +10,14 @@
 ident = "$Id$"
 
 import weakref
-from cStringIO import StringIO
-from Namespaces import OASIS, XMLNS, WSA, WSA_LIST, WSAW_LIST, WSRF_V1_2, WSRF
-from Utility import Collection, CollectionNS, DOM, ElementProxy, basejoin
-from XMLSchema import XMLSchema, SchemaReader, WSDLToolsAdapter
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
+
+from .Namespaces import OASIS, XMLNS, WSA, WSA_LIST, WSAW_LIST, WSRF_V1_2, WSRF
+from .Utility import Collection, CollectionNS, DOM, ElementProxy, basejoin
+from .XMLSchema import XMLSchema, SchemaReader, WSDLToolsAdapter
 
 
 class WSDLReader:
@@ -1567,6 +1571,7 @@ class HeaderInfo(ParameterInfo):
 
 
 def callInfoFromWSDL(port, name):
+    logger = logging.getLogger(__name__)
     """Return a SOAPCallInfo given a WSDL port and operation name."""
     wsdl = port.getService().getWSDL()
     binding = port.getBinding()
@@ -1643,10 +1648,9 @@ def callInfoFromWSDL(port, name):
                     operation.output.message)
             else:
                 message = wsdl.addMessage(operation.output.message)
-                print "Warning:", \
-                      "Recieved message not defined in the WSDL schema.", \
-                      "Adding it."
-                print "Message:", operation.output.message
+                logger.warning("Warning: Received message not defined in the "
+                               "WSDL schema. Adding it.")
+                logger.warning("Message:", operation.output.message)
 
         msgrole = opbinding.output
 

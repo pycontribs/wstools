@@ -13,8 +13,7 @@ from wstools.Utility import DOM
 from wstools.WSDLTools import WSDLReader
 from wstools.TimeoutSocket import TimeoutError
 
-from wstools import tests
-cwd = os.path.dirname(tests.__file__)
+cwd = 'tests'
 
 # that's for tox/pytest
 nameGenerator = None
@@ -31,7 +30,6 @@ def makeTestSuite(section='services_by_file'):
     return suite
 
 
-@unittest.skip("skipping due broken assets")
 class WSDLToolsTestCase(unittest.TestCase):
 
     def __init__(self, methodName='runTest'):
@@ -71,7 +69,7 @@ class WSDLToolsTestCase(unittest.TestCase):
             if self.path[:7] == 'http://':
                 self.wsdl = WSDLReader().loadFromURL(self.path)
             else:
-                self.wsdl = WSDLReader().loadFromFile(self.path)
+                self.wsdl = WSDLReader().loadFromFile('tests/' + self.path)
 
         except TimeoutError:
             print "connection timed out"
@@ -166,11 +164,3 @@ def setUpOptions(section):
 def getOption(cp, section):
     for name, value in cp.items(section):
         yield value
-
-
-def main():
-    unittest.main(defaultTest="makeTestSuite")
-
-
-if __name__ == "__main__":
-    main()

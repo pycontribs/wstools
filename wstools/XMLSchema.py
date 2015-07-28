@@ -289,7 +289,7 @@ class DOMAdapter(DOMAdapterInterface):
         else:
             try:
                 namespace = DOM.findNamespaceURI(prefix, self.__node)
-            except DOMException, ex:
+            except DOMException as ex:
                 if prefix != 'xml':
                     raise SchemaError('%s namespace not declared for %s' % (prefix, self.__node._get_tagName()))
                 namespace = XMLNS.XML
@@ -629,7 +629,7 @@ class XMLSchemaComponent(XMLBase, MarkerInterface):
         if parent.targetNamespace == namespace:
             try:
                 obj = getattr(parent, collection)[name]
-            except KeyError, ex:
+            except KeyError as ex:
                 raise KeyError('targetNamespace(%s) collection(%s) has no item(%s)' % (namespace, collection, name))
 
             return obj
@@ -662,7 +662,7 @@ class XMLSchemaComponent(XMLBase, MarkerInterface):
 
         try:
             obj = getattr(schema, collection)[name]
-        except KeyError, ex:
+        except KeyError as ex:
             raise KeyError('targetNamespace(%s) collection(%s) has no item(%s)' % (namespace, collection, name))
 
         return obj
@@ -1029,7 +1029,7 @@ class XMLSchema(XMLSchemaComponent):
     empty_namespace = ''
     tag = 'schema'
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, logger=None):
         """parent --
            instance variables:
            targetNamespace -- schema's declared targetNamespace, or empty string.
@@ -1067,7 +1067,7 @@ class XMLSchema(XMLSchemaComponent):
         self._imported_schemas = {}
         self._included_schemas = {}
         self._base_url = None
-        self.logger = logging.getLogger('wstools')
+        self.logger = logger or logging.getLogger(__name__)
 
     def getNode(self):
         """
@@ -1228,13 +1228,13 @@ class XMLSchema(XMLSchemaComponent):
                     slocd[import_ns] = schema
                     try:
                         tp.loadSchema(schema)
-                    except NoSchemaLocationWarning, ex:
+                    except NoSchemaLocationWarning as ex:
                         # Dependency declaration, hopefully implementation
                         # is aware of this namespace (eg. SOAP,WSDL,?)
                         self.logger.debug("IMPORT: %s : %s" % (import_ns, ex))
                         del slocd[import_ns]
                         continue
-                    except SchemaError, ex:
+                    except SchemaError as ex:
                         #warnings.warn(\
                         #    '<import namespace="%s" schemaLocation=?>, %s'\
                         #    %(import_ns, 'failed to load schema instance')
