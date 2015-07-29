@@ -136,6 +136,7 @@ WSRFLIST = (WSRF_V1_2,)
 
 
 class OASIS:
+
     '''URLs for Oasis specifications
     '''
     WSSE = "http://docs.oasis-open.org/wss/2004/01/"
@@ -164,6 +165,7 @@ class OASIS:
 
 
 class APACHE:
+
     '''
     This name space is defined by AXIS and it is used for the TC in
     TCapache.py, Map and file attachment (DataHandler)
@@ -222,6 +224,7 @@ WSA_LIST = (WSA200508, WSA200408, WSA200403, WSA200303)
 
 
 class _WSAW(str):
+
     """
     Define ADDRESS attribute to be compatible with WSA* layout
     """

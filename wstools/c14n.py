@@ -101,8 +101,8 @@ def _utilized(n, node, other_attrs, unsuppressedPrefixes):
     elif n.startswith('xmlns'):
         n = n[5:]
     if (n == "" and node.prefix in ["#default", None]) or \
-        n == node.prefix or n in unsuppressedPrefixes:
-            return 1
+            n == node.prefix or n in unsuppressedPrefixes:
+        return 1
     for attr in other_attrs:
         if n == attr.prefix:
             return 1
@@ -151,6 +151,7 @@ _in_subset = lambda subset, node: subset is None or node in subset  # rich's twe
 
 
 class _implementation:
+
     '''Implementation class for C14N. This accompanies a node during it's
     processing and includes the parameters and processing state.'''
 
@@ -174,7 +175,7 @@ class _implementation:
             self.documentOrder = _Element        # At document element
             if not _inclusive(self):
                 inherited, unused = _inclusiveNamespacePrefixes(node, self._inherit_context(node),
-                                self.unsuppressedPrefixes)
+                                                                self.unsuppressedPrefixes)
                 self._do_element(node, inherited, unused=unused)
             else:
                 inherited = self._inherit_context(node)
@@ -311,7 +312,7 @@ class _implementation:
         #       xml_attrs_local -- Local attributes in XML namespace.
         #   ns_unused_inherited -- not rendered namespaces, used for exclusive
         ns_parent, ns_rendered, xml_attrs = \
-                self.state[0], self.state[1].copy(), self.state[2].copy()  # 0422
+            self.state[0], self.state[1].copy(), self.state[2].copy()  # 0422
 
         ns_unused_inherited = unused
         if unused is None:
@@ -372,14 +373,14 @@ class _implementation:
                 # If default namespace is XMLNS.BASE or empty,
                 # and if an ancestor was the same
                 if n == "xmlns" and v in [XMLNS.BASE, ''] \
-                    and ns_rendered.get('xmlns') in [XMLNS.BASE, '', None]:
+                        and ns_rendered.get('xmlns') in [XMLNS.BASE, '', None]:
                     continue
 
                 # "omit namespace node with local name xml, which defines
                 # the xml prefix, if its string value is
                 # http://www.w3.org/XML/1998/namespace."
                 if n in ["xmlns:xml", "xml"] \
-                    and v in ['http://www.w3.org/XML/1998/namespace']:
+                        and v in ['http://www.w3.org/XML/1998/namespace']:
                     continue
 
                 # If not previously rendered

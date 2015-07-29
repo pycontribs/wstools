@@ -1,5 +1,5 @@
-include README.txt
+include README.rst
 include CHANGES.txt
 recursive-include docs *.*
-recursive-include src *.txt *.py *.tar.gz README
+recursive-include wstools *.py
 

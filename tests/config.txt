@@ -10,7 +10,7 @@
 [services_by_file]
 ip2geo = data/ip2geo.wsdl
 zip2geo = data/zip2geo.wsdl
-soapi-dlw = data/soapi-1.63.0-dlw.wsdl  
+soapi-dlw = data/soapi-1.63.0-dlw.wsdl
 soapi-re = data/soapi-1.63.0-re.wsdl
 
 ##########################################################################
@@ -209,7 +209,7 @@ FOPService  =  http://live.capescience.com/wsdl/FOPService.wsdl
 FedRoutingDirectoryService  =  http://demo.soapam.com/services/FedEpayDirectory/FedEpayDirectoryService.wsdl
 GMChart  =  http://service.graphmagic.com/GMService/GraphMagic.asmx?wsdl
 GeoPlaces  =  http://www.codebump.com/services/placelookup.asmx?wsdl
-GlobalWeather  =  http://live.capescience.com/wsdl/GlobalWeather.wsdl
+GlobalWeatherComplex  =  http://live.capescience.com/wsdl/GlobalWeather.wsdl
 GoogleSearch  =  http://api.google.com/GoogleSearch.wsdl
 HPcatalogService  =  http://www.lixusnet.com/lixusnet/HPcatalog.jws?wsdl
 HTMLeMail  =  http://www.framewerks.com/WebServices/HTMLeMail/HTMLeMail.asmx?WSDL
@@ -245,7 +245,7 @@ SendSMS  =  http://www.webservicex.net/SendSMS.asmx?WSDL
 Server  =  http://addison.ra.cwru.edu/orc/calendar_copy/server.php?wsdl
 Service  =  http://www.ejse.com/WeatherService/Service.asmx?WSDL
 SpamKillerService  =  http://wavendon.dsdata.co.uk/axis/services/SpamKiller?wsdl
-StockQuotes  =  http://www.swanandmokashi.com/HomePage/WebServices/StockQuotes.asmx?WSDL
+StockQuotesComplex  =  http://www.swanandmokashi.com/HomePage/WebServices/StockQuotes.asmx?WSDL
 TWSFissionDotNet  =  http://www.sidespace.com/ws/fission/fissiondotnet.php?wsdl
 TerraService  =  http://terraservice.net/TerraService.asmx?WSDL
 Transform  =  http://transform.dataconcert.com/transform.wsdl

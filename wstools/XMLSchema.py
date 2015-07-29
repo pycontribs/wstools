@@ -20,15 +20,20 @@ import weakref
 import sys
 import warnings
 import logging
-from Namespaces import SCHEMA, XMLNS, SOAP, APACHE
-from Utility import DOM, DOMException, Collection, SplitQName, basejoin
-from StringIO import StringIO
+from .Namespaces import SCHEMA, XMLNS, SOAP, APACHE
+from .Utility import DOM, DOMException, Collection, SplitQName, basejoin
+try:
+    from StringIO import StringIO
+except:
+    #   from io import StringIO
+    from io import BytesIO as StringIO
 
 # If we have no threading, this should be a no-op
 try:
     from threading import RLock
 except ImportError:
     class RLock:
+
         def acquire():
             pass
 
@@ -56,6 +61,7 @@ def GetSchema(component):
 
 
 class SchemaReader:
+
     """A SchemaReader creates XMLSchema objects from urls and xml data.
     """
 
@@ -175,6 +181,7 @@ class NoSchemaLocationWarning(Exception):
 # DOM Utility Adapters
 ##########################
 class DOMAdapterInterface:
+
     def hasattr(self, attr, ns=None):
         """return true if node has attribute
            attr -- attribute to check for
@@ -227,8 +234,10 @@ class DOMAdapterInterface:
 
 
 class DOMAdapter(DOMAdapterInterface):
+
     """Adapter for ZSI.Utility.DOM
     """
+
     def __init__(self, node=None):
         """Reset all instance variables.
            element -- DOM document, node, or None
@@ -263,8 +272,9 @@ class DOMAdapter(DOMAdapterInterface):
 
     def setAttributeDictionary(self):
         self.__attributes = {}
-        for v in self.__node._attrs.values():
-            self.__attributes[v.nodeName] = v.nodeValue
+        if self.__node._attrs:
+            for v in self.__node._attrs.values():
+                self.__attributes[v.nodeName] = v.nodeValue
 
     def getAttributeDictionary(self):
         if not self.__attributes:
@@ -307,6 +317,7 @@ class DOMAdapter(DOMAdapterInterface):
 
 
 class XMLBase:
+
     """ These class variables are for string indentation.
     """
     tag = None
@@ -331,116 +342,135 @@ class XMLBase:
 
 
 class DefinitionMarker:
+
     """marker for definitions
     """
     pass
 
 
 class DeclarationMarker:
+
     """marker for declarations
     """
     pass
 
 
 class AttributeMarker:
+
     """marker for attributes
     """
     pass
 
 
 class AttributeGroupMarker:
+
     """marker for attribute groups
     """
     pass
 
 
 class WildCardMarker:
+
     """marker for wildcards
     """
     pass
 
 
 class ElementMarker:
+
     """marker for wildcards
     """
     pass
 
 
 class ReferenceMarker:
+
     """marker for references
     """
     pass
 
 
 class ModelGroupMarker:
+
     """marker for model groups
     """
     pass
 
 
 class AllMarker(ModelGroupMarker):
+
     """marker for all model group
     """
     pass
 
 
 class ChoiceMarker(ModelGroupMarker):
+
     """marker for choice model group
     """
     pass
 
 
 class SequenceMarker(ModelGroupMarker):
+
     """marker for sequence model group
     """
     pass
 
 
 class ExtensionMarker:
+
     """marker for extensions
     """
     pass
 
 
 class RestrictionMarker:
+
     """marker for restrictions
     """
-    facets = ['enumeration', 'length', 'maxExclusive', 'maxInclusive',\
-        'maxLength', 'minExclusive', 'minInclusive', 'minLength',\
-        'pattern', 'fractionDigits', 'totalDigits', 'whiteSpace']
+    facets = ['enumeration', 'length', 'maxExclusive', 'maxInclusive',
+              'maxLength', 'minExclusive', 'minInclusive', 'minLength',
+              'pattern', 'fractionDigits', 'totalDigits', 'whiteSpace']
 
 
 class SimpleMarker:
+
     """marker for simple type information
     """
     pass
 
 
 class ListMarker:
+
     """marker for simple type list
     """
     pass
 
 
 class UnionMarker:
+
     """marker for simple type Union
     """
     pass
 
 
 class ComplexMarker:
+
     """marker for complex type information
     """
     pass
 
 
 class LocalMarker:
+
     """marker for complex type information
     """
     pass
 
 
 class MarkerInterface:
+
     def isDefinition(self):
         return isinstance(self, DefinitionMarker)
 
@@ -500,6 +530,7 @@ class MarkerInterface:
 # Schema Components
 #########################################################
 class XMLSchemaComponent(XMLBase, MarkerInterface):
+
     """
        class variables:
            required -- list of required attributes
@@ -529,9 +560,9 @@ class XMLSchemaComponent(XMLBase, MarkerInterface):
             self._parent = weakref.ref(parent)
 
         if not self.__class__ == XMLSchemaComponent\
-           and not (type(self.__class__.required) == type(XMLSchemaComponent.required)\
-           and type(self.__class__.attributes) == type(XMLSchemaComponent.attributes)\
-           and type(self.__class__.contents) == type(XMLSchemaComponent.contents)):
+           and not (type(self.__class__.required) == type(XMLSchemaComponent.required)
+                    and type(self.__class__.attributes) == type(XMLSchemaComponent.attributes)
+                    and type(self.__class__.contents) == type(XMLSchemaComponent.contents)):
             raise RuntimeError('Bad type for a class variable in %s' % self.__class__)
 
     def getItemTrace(self):
@@ -673,12 +704,12 @@ class XMLSchemaComponent(XMLBase, MarkerInterface):
         if prefix == XMLSchemaComponent.xml:
             return XMLNS.XML
         parent = self
-        ns = self.attributes[XMLSchemaComponent.xmlns].get(prefix or\
-                XMLSchemaComponent.xmlns_key)
+        ns = self.attributes[XMLSchemaComponent.xmlns].get(prefix or
+                                                           XMLSchemaComponent.xmlns_key)
         while not ns:
             parent = parent._parent()
-            ns = parent.attributes[XMLSchemaComponent.xmlns].get(prefix or\
-                    XMLSchemaComponent.xmlns_key)
+            ns = parent.attributes[XMLSchemaComponent.xmlns].get(prefix or
+                                                                 XMLSchemaComponent.xmlns_key)
             if not ns and isinstance(parent, WSDLToolsAdapter):
                 if prefix is None:
                     return ''
@@ -768,8 +799,8 @@ class XMLSchemaComponent(XMLBase, MarkerInterface):
                 self.attributes[k] = []
                 for qname in qnames.split():
                     prefix, value = SplitQName(qname)
-                    self.attributes['memberTypes'].append(\
-                        TypeDescriptionComponent(\
+                    self.attributes['memberTypes'].append(
+                        TypeDescriptionComponent(
                             (self.getXMLNS(prefix), value)))
 
     def getContents(self, node):
@@ -808,11 +839,12 @@ class XMLSchemaComponent(XMLBase, MarkerInterface):
                 continue
 
             if (a not in self.__class__.attributes.keys()) and not\
-                (self.isAttribute() and self.isReference()):
+                    (self.isAttribute() and self.isReference()):
                 raise SchemaError('%s, unknown attribute(%s, %s)' % (self.getItemTrace(), a, self.attributes[a]))
 
 
 class WSDLToolsAdapter(XMLSchemaComponent):
+
     """WSDL Adapter to grab the attributes from the wsdl document node.
     """
     attributes = {'name': None, 'targetNamespace': None}
@@ -829,6 +861,7 @@ class WSDLToolsAdapter(XMLSchemaComponent):
 
 
 class Notation(XMLSchemaComponent):
+
     """<notation>
        parent:
            schema
@@ -863,6 +896,7 @@ class Notation(XMLSchemaComponent):
 
 
 class Annotation(XMLSchemaComponent):
+
     """<annotation>
        parent:
            all,any,anyAttribute,attribute,attributeGroup,choice,complexContent,
@@ -900,6 +934,7 @@ class Annotation(XMLSchemaComponent):
         self.content = tuple(content)
 
     class Documentation(XMLSchemaComponent):
+
         """<documentation>
            parent:
                annotation
@@ -935,6 +970,7 @@ class Annotation(XMLSchemaComponent):
             self.content = tuple(content)
 
     class Appinfo(XMLSchemaComponent):
+
         """<appinfo>
            parent:
                annotation
@@ -971,12 +1007,14 @@ class Annotation(XMLSchemaComponent):
 
 class XMLSchemaFake:
     # This is temporary, for the benefit of WSDL until the real thing works.
+
     def __init__(self, element):
         self.targetNamespace = DOM.getAttr(element, 'targetNamespace')
         self.element = element
 
 
 class XMLSchema(XMLSchemaComponent):
+
     """A schema is a collection of schema components derived from one
        or more schema documents, that is, one or more <schema> element
        information items. It represents the abstract notion of a schema
@@ -1015,17 +1053,17 @@ class XMLSchema(XMLSchemaComponent):
         notations -- global notations
     """
     attributes = {'id': None,
-        'version': None,
-        'xml: lang': None,
-        'targetNamespace': None,
-        'attributeFormDefault': 'unqualified',
-        'elementFormDefault': 'unqualified',
-        'blockDefault': None,
-        'finalDefault': None}
+                  'version': None,
+                  'xml: lang': None,
+                  'targetNamespace': None,
+                  'attributeFormDefault': 'unqualified',
+                  'elementFormDefault': 'unqualified',
+                  'blockDefault': None,
+                  'finalDefault': None}
     contents = {'xsd': ('include', 'import', 'redefine', 'annotation',
-                       'attribute', 'attributeGroup', 'complexType',
-                       'element', 'group', 'notation', 'simpleType',
-                       'annotation')}
+                        'attribute', 'attributeGroup', 'complexType',
+                        'element', 'group', 'notation', 'simpleType',
+                        'annotation')}
     empty_namespace = ''
     tag = 'schema'
 
@@ -1096,7 +1134,7 @@ class XMLSchema(XMLSchemaComponent):
         if not isinstance(schema, XMLSchema):
             raise TypeError('expecting a Schema instance')
         if not schema.targetNamespace or\
-             schema.targetNamespace == self.targetNamespace:
+                schema.targetNamespace == self.targetNamespace:
             self._included_schemas[schemaLocation] = schema
         else:
             raise SchemaError('include schema bad targetNamespace')
@@ -1243,6 +1281,7 @@ class XMLSchema(XMLSchemaComponent):
                         del slocd[import_ns]
 
                         class _LazyEvalImport(str):
+
                             '''Lazy evaluation of import, replace entry in self.imports.'''
                             #attributes = dict(namespace=import_ns)
                             def getSchema(namespace):
@@ -1265,8 +1304,8 @@ class XMLSchema(XMLSchemaComponent):
                     tp._schema = schema
 
                 if import_ns in self.getImportSchemas():
-                    warnings.warn(\
-                        'Detected multiple imports of the namespace "%s" '\
+                    warnings.warn(
+                        'Detected multiple imports of the namespace "%s" '
                         % import_ns)
 
                 self.addImportSchema(schema)
@@ -1310,6 +1349,7 @@ class XMLSchema(XMLSchemaComponent):
                 break
 
     class Import(XMLSchemaComponent):
+
         """<import>
            parent:
                schema
@@ -1383,6 +1423,7 @@ class XMLSchema(XMLSchemaComponent):
             reader.loadFromURL(self.attributes.get('schemaLocation'), schema)
 
     class Include(XMLSchemaComponent):
+
         """<include schemaLocation>
            parent:
                schema
@@ -1394,7 +1435,7 @@ class XMLSchema(XMLSchemaComponent):
         """
         required = ['schemaLocation']
         attributes = {'id': None,
-            'schemaLocation': None}
+                      'schemaLocation': None}
         contents = {'xsd': ['annotation']}
         tag = 'include'
 
@@ -1437,9 +1478,10 @@ class XMLSchema(XMLSchemaComponent):
             return self._schema
 
 
-class AttributeDeclaration(XMLSchemaComponent,\
-                           AttributeMarker,\
+class AttributeDeclaration(XMLSchemaComponent,
+                           AttributeMarker,
                            DeclarationMarker):
+
     """<attribute name>
        parent:
            schema
@@ -1454,10 +1496,10 @@ class AttributeDeclaration(XMLSchemaComponent,\
     """
     required = ['name']
     attributes = {'id': None,
-        'name': None,
-        'type': None,
-        'default': None,
-        'fixed': None}
+                  'name': None,
+                  'type': None,
+                  'default': None,
+                  'fixed': None}
     contents = {'xsd': ['annotation', 'simpleType']}
     tag = 'attribute'
 
@@ -1484,10 +1526,11 @@ class AttributeDeclaration(XMLSchemaComponent,\
                 raise SchemaError('Unknown component (%s)' % (i.getTagName()))
 
 
-class LocalAttributeDeclaration(AttributeDeclaration,\
-                                AttributeMarker,\
-                                LocalMarker,\
+class LocalAttributeDeclaration(AttributeDeclaration,
+                                AttributeMarker,
+                                LocalMarker,
                                 DeclarationMarker):
+
     """<attribute name>
        parent:
            complexType, restriction, extension, attributeGroup
@@ -1504,12 +1547,12 @@ class LocalAttributeDeclaration(AttributeDeclaration,\
     """
     required = ['name']
     attributes = {'id': None,
-        'name': None,
-        'type': None,
-        'form': lambda self: GetSchema(self).getAttributeFormDefault(),
-        'use': 'optional',
-        'default': None,
-        'fixed': None}
+                  'name': None,
+                  'type': None,
+                  'form': lambda self: GetSchema(self).getAttributeFormDefault(),
+                  'use': 'optional',
+                  'default': None,
+                  'fixed': None}
     contents = {'xsd': ['annotation', 'simpleType']}
 
     def __init__(self, parent):
@@ -1533,10 +1576,11 @@ class LocalAttributeDeclaration(AttributeDeclaration,\
                 raise SchemaError('Unknown component (%s)' % (i.getTagName()))
 
 
-class AttributeWildCard(XMLSchemaComponent,\
-                        AttributeMarker,\
-                        DeclarationMarker,\
+class AttributeWildCard(XMLSchemaComponent,
+                        AttributeMarker,
+                        DeclarationMarker,
                         WildCardMarker):
+
     """<anyAttribute>
        parents:
            complexType, restriction, extension, attributeGroup
@@ -1549,8 +1593,8 @@ class AttributeWildCard(XMLSchemaComponent,\
            annotation?
     """
     attributes = {'id': None,
-        'namespace': '##any',
-        'processContents': 'strict'}
+                  'namespace': '##any',
+                  'processContents': 'strict'}
     contents = {'xsd': ['annotation']}
     tag = 'anyAttribute'
 
@@ -1571,9 +1615,10 @@ class AttributeWildCard(XMLSchemaComponent,\
                 raise SchemaError('Unknown component (%s)' % (i.getTagName()))
 
 
-class AttributeReference(XMLSchemaComponent,\
-                         AttributeMarker,\
+class AttributeReference(XMLSchemaComponent,
+                         AttributeMarker,
                          ReferenceMarker):
+
     """<attribute ref>
        parents:
            complexType, restriction, extension, attributeGroup
@@ -1588,10 +1633,10 @@ class AttributeReference(XMLSchemaComponent,\
     """
     required = ['ref']
     attributes = {'id': None,
-        'ref': None,
-        'use': 'optional',
-        'default': None,
-        'fixed': None}
+                  'ref': None,
+                  'use': 'optional',
+                  'default': None,
+                  'fixed': None}
     contents = {'xsd': ['annotation']}
     tag = 'attribute'
 
@@ -1615,9 +1660,10 @@ class AttributeReference(XMLSchemaComponent,\
                 raise SchemaError('Unknown component (%s)' % (i.getTagName()))
 
 
-class AttributeGroupDefinition(XMLSchemaComponent,\
-                               AttributeGroupMarker,\
+class AttributeGroupDefinition(XMLSchemaComponent,
+                               AttributeGroupMarker,
                                DefinitionMarker):
+
     """<attributeGroup name>
        parents:
            schema, redefine
@@ -1629,7 +1675,7 @@ class AttributeGroupDefinition(XMLSchemaComponent,\
     """
     required = ['name']
     attributes = {'id': None,
-        'name': None}
+                  'name': None}
     contents = {'xsd': ['annotation', 'attribute', 'attributeGroup', 'anyAttribute']}
     tag = 'attributeGroup'
 
@@ -1673,9 +1719,10 @@ class AttributeGroupDefinition(XMLSchemaComponent,\
         self.attr_content = tuple(content)
 
 
-class AttributeGroupReference(XMLSchemaComponent,\
-                              AttributeGroupMarker,\
+class AttributeGroupReference(XMLSchemaComponent,
+                              AttributeGroupMarker,
                               ReferenceMarker):
+
     """<attributeGroup ref>
        parents:
            complexType, restriction, extension, attributeGroup
@@ -1687,7 +1734,7 @@ class AttributeGroupReference(XMLSchemaComponent,\
     """
     required = ['ref']
     attributes = {'id': None,
-        'ref': None}
+                  'ref': None}
     contents = {'xsd': ['annotation']}
     tag = 'attributeGroup'
 
@@ -1718,6 +1765,7 @@ class AttributeGroupReference(XMLSchemaComponent,\
 # Elements
 #####################################################
 class IdentityConstrants(XMLSchemaComponent):
+
     """Allow one to uniquely identify nodes in a document and ensure the
        integrity of references between them.
 
@@ -1725,6 +1773,7 @@ class IdentityConstrants(XMLSchemaComponent):
        selector -- XPath to selected nodes
        fields -- list of XPath to key field
     """
+
     def __init__(self, parent):
         XMLSchemaComponent.__init__(self, parent)
         self.selector = None
@@ -1757,6 +1806,7 @@ class IdentityConstrants(XMLSchemaComponent):
             self.fields = tuple(fields)
 
     class Constraint(XMLSchemaComponent):
+
         def __init__(self, parent):
             XMLSchemaComponent.__init__(self, parent)
             self.annotation = None
@@ -1777,6 +1827,7 @@ class IdentityConstrants(XMLSchemaComponent):
                     raise SchemaError('Unknown component (%s)' % (i.getTagName()))
 
     class Selector(Constraint):
+
         """<selector xpath>
            parent:
                unique, key, keyref
@@ -1788,11 +1839,12 @@ class IdentityConstrants(XMLSchemaComponent):
         """
         required = ['xpath']
         attributes = {'id': None,
-            'xpath': None}
+                      'xpath': None}
         contents = {'xsd': ['annotation']}
         tag = 'selector'
 
     class Field(Constraint):
+
         """<field xpath>
            parent:
                unique, key, keyref
@@ -1804,12 +1856,13 @@ class IdentityConstrants(XMLSchemaComponent):
         """
         required = ['xpath']
         attributes = {'id': None,
-            'xpath': None}
+                      'xpath': None}
         contents = {'xsd': ['annotation']}
         tag = 'field'
 
 
 class Unique(IdentityConstrants):
+
     """<unique name> Enforce fields are unique w/i a specified scope.
 
        parent:
@@ -1822,12 +1875,13 @@ class Unique(IdentityConstrants):
     """
     required = ['name']
     attributes = {'id': None,
-        'name': None}
+                  'name': None}
     contents = {'xsd': ['annotation', 'selector', 'field']}
     tag = 'unique'
 
 
 class Key(IdentityConstrants):
+
     """<key name> Enforce fields are unique w/i a specified scope, and all
            field values are present w/i document.  Fields cannot
            be nillable.
@@ -1842,12 +1896,13 @@ class Key(IdentityConstrants):
     """
     required = ['name']
     attributes = {'id': None,
-        'name': None}
+                  'name': None}
     contents = {'xsd': ['annotation', 'selector', 'field']}
     tag = 'key'
 
 
 class KeyRef(IdentityConstrants):
+
     """<keyref name refer> Ensure a match between two sets of values in an
            instance.
        parent:
@@ -1861,15 +1916,16 @@ class KeyRef(IdentityConstrants):
     """
     required = ['name', 'refer']
     attributes = {'id': None,
-        'name': None,
-        'refer': None}
+                  'name': None,
+                  'refer': None}
     contents = {'xsd': ['annotation', 'selector', 'field']}
     tag = 'keyref'
 
 
-class ElementDeclaration(XMLSchemaComponent,\
-                         ElementMarker,\
+class ElementDeclaration(XMLSchemaComponent,
+                         ElementMarker,
                          DeclarationMarker):
+
     """<element name>
        parents:
            schema
@@ -1892,17 +1948,17 @@ class ElementDeclaration(XMLSchemaComponent,\
     """
     required = ['name']
     attributes = {'id': None,
-        'name': None,
-        'type': None,
-        'default': None,
-        'fixed': None,
-        'nillable': 0,
-        'abstract': 0,
-        'substitutionGroup': None,
-        'block': lambda self: self._parent().getBlockDefault(),
-        'final': lambda self: self._parent().getFinalDefault()}
-    contents = {'xsd': ['annotation', 'simpleType', 'complexType', 'key',\
-        'keyref', 'unique']}
+                  'name': None,
+                  'type': None,
+                  'default': None,
+                  'fixed': None,
+                  'nillable': 0,
+                  'abstract': 0,
+                  'substitutionGroup': None,
+                  'block': lambda self: self._parent().getBlockDefault(),
+                  'final': lambda self: self._parent().getFinalDefault()}
+    contents = {'xsd': ['annotation', 'simpleType', 'complexType', 'key',
+                        'keyref', 'unique']}
     tag = 'element'
 
     def __init__(self, parent):
@@ -1937,7 +1993,7 @@ class ElementDeclaration(XMLSchemaComponent,\
                 return TypeDescriptionComponent((v, 'anyType'))
 
             if isinstance(parent, WSDLToolsAdapter)\
-                or not hasattr(parent, '_parent'):
+                    or not hasattr(parent, '_parent'):
                 break
 
             parent = parent._parent()
@@ -2000,8 +2056,9 @@ class ElementDeclaration(XMLSchemaComponent,\
         self.constraints = constraints
 
 
-class LocalElementDeclaration(ElementDeclaration,\
+class LocalElementDeclaration(ElementDeclaration,
                               LocalMarker):
+
     """<element>
        parents:
            all, choice, sequence
@@ -2021,18 +2078,18 @@ class LocalElementDeclaration(ElementDeclaration,\
     """
     required = ['name']
     attributes = {'id': None,
-        'name': None,
-        'form': lambda self: GetSchema(self).getElementFormDefault(),
-        'type': None,
-        'minOccurs': '1',
-        'maxOccurs': '1',
-        'default': None,
-        'fixed': None,
-        'nillable': 0,
-        'abstract': 0,
-        'block': lambda self: GetSchema(self).getBlockDefault()}
-    contents = {'xsd': ['annotation', 'simpleType', 'complexType', 'key',\
-        'keyref', 'unique']}
+                  'name': None,
+                  'form': lambda self: GetSchema(self).getElementFormDefault(),
+                  'type': None,
+                  'minOccurs': '1',
+                  'maxOccurs': '1',
+                  'default': None,
+                  'fixed': None,
+                  'nillable': 0,
+                  'abstract': 0,
+                  'block': lambda self: GetSchema(self).getBlockDefault()}
+    contents = {'xsd': ['annotation', 'simpleType', 'complexType', 'key',
+                        'keyref', 'unique']}
 
     def isQualified(self):
         """
@@ -2048,9 +2105,10 @@ Local elements can be qualified or unqualifed according
         raise SchemaError('Bad form (%s) for element: %s' % (form, self.getItemTrace()))
 
 
-class ElementReference(XMLSchemaComponent,\
-                       ElementMarker,\
+class ElementReference(XMLSchemaComponent,
+                       ElementMarker,
                        ReferenceMarker):
+
     """<element ref>
        parents:
            all, choice, sequence
@@ -2064,9 +2122,9 @@ class ElementReference(XMLSchemaComponent,\
     """
     required = ['ref']
     attributes = {'id': None,
-        'ref': None,
-        'minOccurs': '1',
-        'maxOccurs': '1'}
+                  'ref': None,
+                  'minOccurs': '1',
+                  'maxOccurs': '1'}
     contents = {'xsd': ['annotation']}
     tag = 'element'
 
@@ -2097,6 +2155,7 @@ class ElementReference(XMLSchemaComponent,\
 
 
 class ElementWildCard(LocalElementDeclaration, WildCardMarker):
+
     """<any>
        parents:
            choice, sequence
@@ -2112,10 +2171,10 @@ class ElementWildCard(LocalElementDeclaration, WildCardMarker):
     """
     required = []
     attributes = {'id': None,
-        'minOccurs': '1',
-        'maxOccurs': '1',
-        'namespace': '##any',
-        'processContents': 'strict'}
+                  'minOccurs': '1',
+                  'maxOccurs': '1',
+                  'namespace': '##any',
+                  'processContents': 'strict'}
     contents = {'xsd': ['annotation']}
     tag = 'any'
 
@@ -2154,8 +2213,9 @@ class ElementWildCard(LocalElementDeclaration, WildCardMarker):
 ######################################################
 # Model Groups
 #####################################################
-class Sequence(XMLSchemaComponent,\
+class Sequence(XMLSchemaComponent,
                SequenceMarker):
+
     """<sequence>
        parents:
            complexType, extension, restriction, group, choice, sequence
@@ -2168,10 +2228,10 @@ class Sequence(XMLSchemaComponent,\
            annotation?, (element | group | choice | sequence | any)*
     """
     attributes = {'id': None,
-        'minOccurs': '1',
-        'maxOccurs': '1'}
-    contents = {'xsd': ['annotation', 'element', 'group', 'choice', 'sequence',\
-         'any']}
+                  'minOccurs': '1',
+                  'maxOccurs': '1'}
+    contents = {'xsd': ['annotation', 'element', 'group', 'choice', 'sequence',
+                        'any']}
     tag = 'sequence'
 
     def __init__(self, parent):
@@ -2212,8 +2272,9 @@ class Sequence(XMLSchemaComponent,\
         self.content = tuple(content)
 
 
-class All(XMLSchemaComponent,\
+class All(XMLSchemaComponent,
           AllMarker):
+
     """<all>
        parents:
            complexType, extension, restriction, group
@@ -2226,8 +2287,8 @@ class All(XMLSchemaComponent,\
            annotation?, element*
     """
     attributes = {'id': None,
-        'minOccurs': '1',
-        'maxOccurs': '1'}
+                  'minOccurs': '1',
+                  'maxOccurs': '1'}
     contents = {'xsd': ['annotation', 'element']}
     tag = 'all'
 
@@ -2261,8 +2322,9 @@ class All(XMLSchemaComponent,\
         self.content = tuple(content)
 
 
-class Choice(XMLSchemaComponent,\
+class Choice(XMLSchemaComponent,
              ChoiceMarker):
+
     """<choice>
        parents:
            complexType, extension, restriction, group, choice, sequence
@@ -2275,10 +2337,10 @@ class Choice(XMLSchemaComponent,\
            annotation?, (element | group | choice | sequence | any)*
     """
     attributes = {'id': None,
-        'minOccurs': '1',
-        'maxOccurs': '1'}
-    contents = {'xsd': ['annotation', 'element', 'group', 'choice', 'sequence',\
-         'any']}
+                  'minOccurs': '1',
+                  'maxOccurs': '1'}
+    contents = {'xsd': ['annotation', 'element', 'group', 'choice', 'sequence',
+                        'any']}
     tag = 'choice'
 
     def __init__(self, parent):
@@ -2319,9 +2381,10 @@ class Choice(XMLSchemaComponent,\
         self.content = tuple(content)
 
 
-class ModelGroupDefinition(XMLSchemaComponent,\
-                           ModelGroupMarker,\
+class ModelGroupDefinition(XMLSchemaComponent,
+                           ModelGroupMarker,
                            DefinitionMarker):
+
     """<group name>
        parents:
            redefine, schema
@@ -2334,7 +2397,7 @@ class ModelGroupDefinition(XMLSchemaComponent,\
     """
     required = ['name']
     attributes = {'id': None,
-        'name': None}
+                  'name': None}
     contents = {'xsd': ['annotation', 'all', 'choice', 'sequence']}
     tag = 'group'
 
@@ -2367,9 +2430,10 @@ class ModelGroupDefinition(XMLSchemaComponent,\
                 raise SchemaError('Unknown component (%s)' % (i.getTagName()))
 
 
-class ModelGroupReference(XMLSchemaComponent,\
-                          ModelGroupMarker,\
+class ModelGroupReference(XMLSchemaComponent,
+                          ModelGroupMarker,
                           ReferenceMarker):
+
     """<group ref>
        parents:
            choice, complexType, extension, restriction, sequence
@@ -2384,9 +2448,9 @@ class ModelGroupReference(XMLSchemaComponent,\
     """
     required = ['ref']
     attributes = {'id': None,
-        'ref': None,
-        'minOccurs': '1',
-        'maxOccurs': '1'}
+                  'ref': None,
+                  'minOccurs': '1',
+                  'maxOccurs': '1'}
     contents = {'xsd': ['annotation']}
     tag = 'group'
 
@@ -2413,9 +2477,10 @@ class ModelGroupReference(XMLSchemaComponent,\
                 raise SchemaError('Unknown component (%s)' % (i.getTagName()))
 
 
-class ComplexType(XMLSchemaComponent,\
-                  DefinitionMarker,\
+class ComplexType(XMLSchemaComponent,
+                  DefinitionMarker,
                   ComplexMarker):
+
     """<complexType name>
        parents:
            redefine, schema
@@ -2433,14 +2498,14 @@ class ComplexType(XMLSchemaComponent,\
     """
     required = ['name']
     attributes = {'id': None,
-        'name': None,
-        'mixed': 0,
-        'abstract': 0,
-        'block': lambda self: self._parent().getBlockDefault(),
-        'final': lambda self: self._parent().getFinalDefault()}
-    contents = {'xsd': ['annotation', 'simpleContent', 'complexContent',\
-        'group', 'all', 'choice', 'sequence', 'attribute', 'attributeGroup',\
-        'anyAttribute', 'any']}
+                  'name': None,
+                  'mixed': 0,
+                  'abstract': 0,
+                  'block': lambda self: self._parent().getBlockDefault(),
+                  'final': lambda self: self._parent().getFinalDefault()}
+    contents = {'xsd': ['annotation', 'simpleContent', 'complexContent',
+                        'group', 'all', 'choice', 'sequence', 'attribute', 'attributeGroup',
+                        'anyAttribute', 'any']}
     tag = 'complexType'
 
     def __init__(self, parent):
@@ -2472,7 +2537,7 @@ class ComplexType(XMLSchemaComponent,\
 
     def fromDom(self, node):
         self.setAttributes(node)
-        contents = self.getContents(node)
+        contents = list(self.getContents(node))
 
         indx = 0
         num = len(contents)
@@ -2526,6 +2591,7 @@ class ComplexType(XMLSchemaComponent,\
                 indx += 1
 
     class _DerivedType(XMLSchemaComponent):
+
         def __init__(self, parent):
             XMLSchemaComponent.__init__(self, parent)
             self.annotation = None
@@ -2555,8 +2621,9 @@ class ComplexType(XMLSchemaComponent,\
                 self.derivation.fromDom(i)
             self.content = self.derivation
 
-    class ComplexContent(_DerivedType,\
+    class ComplexContent(_DerivedType,
                          ComplexMarker):
+
         """<complexContent>
            parents:
                complexType
@@ -2568,7 +2635,7 @@ class ComplexType(XMLSchemaComponent,\
                annotation?, (restriction | extension)
         """
         attributes = {'id': None,
-            'mixed': 0}
+                      'mixed': 0}
         contents = {'xsd': ['annotation', 'restriction', 'extension']}
         tag = 'complexContent'
 
@@ -2584,6 +2651,7 @@ class ComplexType(XMLSchemaComponent,\
             raise SchemaError('invalid value for attribute mixed(%s): %s' % (m, self.getItemTrace()))
 
         class _DerivationBase(XMLSchemaComponent):
+
             """<extension>,<restriction>
                parents:
                    complexContent
@@ -2597,9 +2665,9 @@ class ComplexType(XMLSchemaComponent,\
             """
             required = ['base']
             attributes = {'id': None,
-                'base': None}
-            contents = {'xsd': ['annotation', 'group', 'all', 'choice',\
-                'sequence', 'attribute', 'attributeGroup', 'anyAttribute']}
+                          'base': None}
+            contents = {'xsd': ['annotation', 'group', 'all', 'choice',
+                                'sequence', 'attribute', 'attributeGroup', 'anyAttribute']}
 
             def __init__(self, parent):
                 XMLSchemaComponent.__init__(self, parent)
@@ -2667,6 +2735,7 @@ class ComplexType(XMLSchemaComponent,\
 
         class Extension(_DerivationBase,
                         ExtensionMarker):
+
             """<extension base>
                parents:
                    complexContent
@@ -2680,8 +2749,9 @@ class ComplexType(XMLSchemaComponent,\
             """
             tag = 'extension'
 
-        class Restriction(_DerivationBase,\
+        class Restriction(_DerivationBase,
                           RestrictionMarker):
+
             """<restriction base>
                parents:
                    complexContent
@@ -2695,8 +2765,9 @@ class ComplexType(XMLSchemaComponent,\
             """
             tag = 'restriction'
 
-    class SimpleContent(_DerivedType,\
+    class SimpleContent(_DerivedType,
                         SimpleMarker):
+
         """<simpleContent>
            parents:
                complexType
@@ -2710,8 +2781,9 @@ class ComplexType(XMLSchemaComponent,\
         contents = {'xsd': ['annotation', 'restriction', 'extension']}
         tag = 'simpleContent'
 
-        class Extension(XMLSchemaComponent,\
+        class Extension(XMLSchemaComponent,
                         ExtensionMarker):
+
             """<extension base>
                parents:
                    simpleContent
@@ -2724,9 +2796,9 @@ class ComplexType(XMLSchemaComponent,\
             """
             required = ['base']
             attributes = {'id': None,
-                'base': None}
+                          'base': None}
             contents = {'xsd': ['annotation', 'attribute', 'attributeGroup',
-                'anyAttribute']}
+                                'anyAttribute']}
             tag = 'extension'
 
             def __init__(self, parent):
@@ -2770,8 +2842,9 @@ class ComplexType(XMLSchemaComponent,\
                     indx += 1
                 self.attr_content = tuple(content)
 
-        class Restriction(XMLSchemaComponent,\
+        class Restriction(XMLSchemaComponent,
                           RestrictionMarker):
+
             """<restriction base>
                parents:
                    simpleContent
@@ -2788,9 +2861,9 @@ class ComplexType(XMLSchemaComponent,\
             """
             required = ['base']
             attributes = {'id': None,
-                'base': None}
-            contents = {'xsd': ['annotation', 'simpleType', 'attribute',\
-                'attributeGroup', 'anyAttribute'] + RestrictionMarker.facets}
+                          'base': None}
+            contents = {'xsd': ['annotation', 'simpleType', 'attribute',
+                                'attributeGroup', 'anyAttribute'] + RestrictionMarker.facets}
             tag = 'restriction'
 
             def __init__(self, parent):
@@ -2838,8 +2911,9 @@ class ComplexType(XMLSchemaComponent,\
                 self.attr_content = tuple(content)
 
 
-class LocalComplexType(ComplexType,\
+class LocalComplexType(ComplexType,
                        LocalMarker):
+
     """<complexType>
        parents:
            element
@@ -2853,13 +2927,14 @@ class LocalComplexType(ComplexType,\
     """
     required = []
     attributes = {'id': None,
-        'mixed': 0}
+                  'mixed': 0}
     tag = 'complexType'
 
 
-class SimpleType(XMLSchemaComponent,\
-                 DefinitionMarker,\
+class SimpleType(XMLSchemaComponent,
+                 DefinitionMarker,
                  SimpleMarker):
+
     """<simpleType name>
        parents:
            redefine, schema
@@ -2874,8 +2949,8 @@ class SimpleType(XMLSchemaComponent,\
     """
     required = ['name']
     attributes = {'id': None,
-        'name': None,
-        'final': lambda self: self._parent().getFinalDefault()}
+                  'name': None,
+                  'final': lambda self: self._parent().getFinalDefault()}
     contents = {'xsd': ['annotation', 'restriction', 'list', 'union']}
     tag = 'simpleType'
 
@@ -2912,8 +2987,9 @@ class SimpleType(XMLSchemaComponent,\
             raise SchemaError('Unknown component (%s)' % (component))
         self.content.fromDom(child)
 
-    class Restriction(XMLSchemaComponent,\
+    class Restriction(XMLSchemaComponent,
                       RestrictionMarker):
+
         """<restriction base>
            parents:
                simpleType
@@ -2928,7 +3004,7 @@ class SimpleType(XMLSchemaComponent,\
                totalDigits | whiteSpace)*
         """
         attributes = {'id': None,
-            'base': None}
+                      'base': None}
         contents = {'xsd': ['annotation', 'simpleType'] + RestrictionMarker.facets}
         tag = 'restriction'
 
@@ -2973,6 +3049,7 @@ class SimpleType(XMLSchemaComponent,\
 
     class Union(XMLSchemaComponent,
                 UnionMarker):
+
         """<union>
            parents:
                simpleType
@@ -2984,7 +3061,7 @@ class SimpleType(XMLSchemaComponent,\
                annotation?, simpleType*
         """
         attributes = {'id': None,
-            'memberTypes': None}
+                      'memberTypes': None}
         contents = {'xsd': ['annotation', 'simpleType']}
         tag = 'union'
 
@@ -3012,6 +3089,7 @@ class SimpleType(XMLSchemaComponent,\
 
     class List(XMLSchemaComponent,
                ListMarker):
+
         """<list>
            parents:
                simpleType
@@ -3023,7 +3101,7 @@ class SimpleType(XMLSchemaComponent,\
                annotation?, simpleType?
         """
         attributes = {'id': None,
-            'itemType': None}
+                      'itemType': None}
         contents = {'xsd': ['annotation', 'simpleType']}
         tag = 'list'
 
@@ -3062,9 +3140,10 @@ class SimpleType(XMLSchemaComponent,\
                     raise SchemaError('Unknown component (%s)' % (i.getTagName()))
 
 
-class AnonymousSimpleType(SimpleType,\
-                          SimpleMarker,\
+class AnonymousSimpleType(SimpleType,
+                          SimpleMarker,
                           LocalMarker):
+
     """<simpleType>
        parents:
            attribute, element, list, restriction, union
@@ -3080,6 +3159,7 @@ class AnonymousSimpleType(SimpleType,\
 
 
 class Redefine:
+
     """<redefine>
        parents:
        attributes:
@@ -3101,6 +3181,7 @@ else:
 
 
 class TypeDescriptionComponent(tupleClass):
+
     """Tuple of length 2, consisting of
        a namespace and unprefixed name.
     """

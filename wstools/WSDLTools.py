@@ -21,6 +21,7 @@ from .XMLSchema import XMLSchema, SchemaReader, WSDLToolsAdapter
 
 
 class WSDLReader:
+
     """A WSDLReader creates WSDL instances from urls and xml data."""
 
     # Custom subclasses of WSDLReader may wish to implement a caching
@@ -61,6 +62,7 @@ class WSDLReader:
 
 
 class WSDL:
+
     """A WSDL object models a WSDL service description. WSDL objects
        may be created manually or loaded from an xml representation
        using a WSDLReader instance."""
@@ -90,7 +92,7 @@ class WSDL:
         if name in self.services:
             raise WSDLError(
                 'Duplicate service element: %s' % name
-                )
+            )
         item = Service(name, documentation)
         if targetNamespace:
             item.targetNamespace = targetNamespace
@@ -101,7 +103,7 @@ class WSDL:
         if name in self.messages:
             raise WSDLError(
                 'Duplicate message element: %s.' % name
-                )
+            )
         item = Message(name, documentation)
         if targetNamespace:
             item.targetNamespace = targetNamespace
@@ -112,7 +114,7 @@ class WSDL:
         if name in self.portTypes:
             raise WSDLError(
                 'Duplicate portType element: name'
-                )
+            )
         item = PortType(name, documentation)
         if targetNamespace:
             item.targetNamespace = targetNamespace
@@ -123,7 +125,7 @@ class WSDL:
         if name in self.bindings:
             raise WSDLError(
                 'Duplicate binding element: %s' % name
-                )
+            )
         item = Binding(name, type, documentation)
         if targetNamespace:
             item.targetNamespace = targetNamespace
@@ -182,7 +184,7 @@ class WSDL:
         if definitions is None:
             raise WSDLError(
                 'Missing <definitions> element.'
-                )
+            )
         self.version = DOM.WSDLUriToVersion(definitions.namespaceURI)
         NS_WSDL = DOM.GetWSDLUri(self.version)
 
@@ -261,7 +263,7 @@ class WSDL:
                 if type is None:
                     raise WSDLError(
                         'Missing type attribute for binding %s.' % name
-                        )
+                    )
                 type = ParseQName(type, element)
                 docs = GetDocumentation(element)
                 binding = self.addBinding(name, type, docs, targetNamespace)
@@ -318,7 +320,7 @@ class WSDL:
         if namespace is None or location is None:
             raise WSDLError(
                 'Invalid import element (missing namespace or location).'
-                )
+            )
         if base_location:
             location = basejoin(base_location, location)
             element.setAttributeNS(None, 'location', location)
@@ -336,7 +338,7 @@ class WSDL:
             if imported is None:
                 raise WSDLError(
                     'Import target element not found for: %s' % location
-                    )
+                )
 
             imported_tns = DOM.findTargetNS(imported)
             if imported_tns != namespace:
@@ -376,7 +378,9 @@ class WSDL:
 
 
 class Element:
+
     """A class that provides common functions for WSDL element classes."""
+
     def __init__(self, name=None, documentation=''):
         self.name = name
         self.documentation = documentation
@@ -402,6 +406,7 @@ class Element:
 
 
 class ImportElement(Element):
+
     def __init__(self, namespace, location):
         self.namespace = namespace
         self.location = location
@@ -438,6 +443,7 @@ class Types(Collection):
 
 
 class Message(Element):
+
     def __init__(self, name, documentation=''):
         Element.__init__(self, name, documentation)
         self.parts = Collection(self)
@@ -446,11 +452,11 @@ class Message(Element):
         if name in self.parts:
             raise WSDLError(
                 'Duplicate message part element: %s' % name
-                )
+            )
         if type is None and element is None:
             raise WSDLError(
                 'Missing type or element attribute for part: %s' % name
-                )
+            )
         item = MessagePart(name)
         item.element = element
         item.type = type
@@ -467,7 +473,7 @@ class Message(Element):
             if typeref is None and elemref is None:
                 raise WSDLError(
                     'No type or element attribute for part: %s' % name
-                    )
+                )
             if typeref is not None:
                 part.type = ParseTypeRef(typeref, element)
             if elemref is not None:
@@ -508,6 +514,7 @@ class Message(Element):
 
 
 class MessagePart(Element):
+
     def __init__(self, name):
         Element.__init__(self, name, '')
         self.element = None
@@ -547,6 +554,7 @@ class MessagePart(Element):
 
 
 class PortType(Element):
+
     '''PortType has a anyAttribute, thus must provide for an extensible
        mechanism for supporting such attributes.  ResourceProperties is
        specified in WS-ResourceProperties.   wsa:Action is specified in
@@ -644,13 +652,14 @@ class PortType(Element):
             ns, name = self.resourceProperties
             prefix = epc.getPrefix(ns)
             epc.setAttributeNS(WSRF.PROPERTIES.LATEST, 'ResourceProperties',
-                                '%s:%s' % (prefix, name))
+                               '%s:%s' % (prefix, name))
 
         for op in self.operations:
             op.toDom(epc._getNode())
 
 
 class Operation(Element):
+
     def __init__(self, name, documentation='', parameterOrder=None):
         Element.__init__(self, name, documentation)
         self.parameterOrder = parameterOrder
@@ -697,7 +706,7 @@ class Operation(Element):
         if name in self.faults:
             raise WSDLError(
                 'Duplicate fault element: %s' % name
-                )
+            )
         item = MessageRole('fault', message, name, documentation, action)
         self.faults[name] = item
         return item
@@ -728,6 +737,7 @@ class Operation(Element):
 
 
 class MessageRole(Element):
+
     def __init__(self, type, message, name='', documentation='', action=None):
         Element.__init__(self, name, documentation)
         self.message = message
@@ -775,6 +785,7 @@ class MessageRole(Element):
 
 
 class Binding(Element):
+
     def __init__(self, name, type, documentation=''):
         Element.__init__(self, name, documentation)
         self.operations = Collection(self)
@@ -869,6 +880,7 @@ class Binding(Element):
 
 
 class OperationBinding(Element):
+
     def __init__(self, name, documentation=''):
         Element.__init__(self, name, documentation)
         self.input = None
@@ -952,6 +964,7 @@ class OperationBinding(Element):
 
 
 class MessageRoleBinding(Element):
+
     def __init__(self, type, name='', documentation=''):
         Element.__init__(self, name, documentation)
         self.type = type
@@ -976,7 +989,7 @@ class MessageRoleBinding(Element):
                 if use is None:
                     raise WSDLError(
                         'Invalid soap:body binding element.'
-                        )
+                    )
                 ob = SoapBodyBinding(use, namespace, encstyle, parts)
                 self.addExtension(ob)
                 continue
@@ -989,14 +1002,14 @@ class MessageRoleBinding(Element):
                 if use is None or name is None:
                     raise WSDLError(
                         'Invalid soap:fault binding element.'
-                        )
+                    )
                 ob = SoapFaultBinding(name, use, namespace, encstyle)
                 self.addExtension(ob)
                 continue
 
             elif ns in DOM.NS_SOAP_BINDING_ALL and name in (
                 'header', 'headerfault'
-                ):
+            ):
                 encstyle = DOM.getAttr(e, 'encodingStyle', default=None)
                 namespace = DOM.getAttr(e, 'namespace', default=None)
                 message = DOM.getAttr(e, 'message')
@@ -1055,6 +1068,7 @@ class MessageRoleBinding(Element):
 
 
 class Service(Element):
+
     def __init__(self, name, documentation=''):
         Element.__init__(self, name, documentation)
         self.ports = Collection(self)
@@ -1075,7 +1089,7 @@ class Service(Element):
             if name is None or binding is None:
                 raise WSDLError(
                     'Invalid port element.'
-                    )
+                )
             binding = ParseQName(binding, element)
             port = self.addPort(name, binding, docs)
             port.load_ex(GetExtensions(element))
@@ -1096,6 +1110,7 @@ class Service(Element):
 
 
 class Port(Element):
+
     def __init__(self, name, binding, documentation=''):
         Element.__init__(self, name, documentation)
         self.binding = binding
@@ -1127,7 +1142,7 @@ class Port(Element):
                 return item
         raise WSDLError(
             'No address binding found in port.'
-            )
+        )
 
     def load_ex(self, elements):
         for e in elements:
@@ -1161,6 +1176,7 @@ class Port(Element):
 
 
 class SoapBinding:
+
     def __init__(self, transport, style='rpc'):
         self.transport = transport
         self.style = style
@@ -1179,6 +1195,7 @@ class SoapBinding:
 
 
 class SoapAddressBinding:
+
     def __init__(self, location):
         self.location = location
 
@@ -1193,6 +1210,7 @@ class SoapAddressBinding:
 
 
 class SoapOperationBinding:
+
     def __init__(self, soapAction=None, style=None):
         self.soapAction = soapAction
         self.style = style
@@ -1211,11 +1229,12 @@ class SoapOperationBinding:
 
 
 class SoapBodyBinding:
+
     def __init__(self, use, namespace=None, encodingStyle=None, parts=None):
         if not use in ('literal', 'encoded'):
             raise WSDLError(
                 'Invalid use attribute value: %s' % use
-                )
+            )
         self.encodingStyle = encodingStyle
         self.namespace = namespace
         if type(parts) in (type(''), type(u'')):
@@ -1235,11 +1254,12 @@ class SoapBodyBinding:
 
 
 class SoapFaultBinding:
+
     def __init__(self, name, use, namespace=None, encodingStyle=None):
         if not use in ('literal', 'encoded'):
             raise WSDLError(
                 'Invalid use attribute value: %s' % use
-                )
+            )
         self.encodingStyle = encodingStyle
         self.namespace = namespace
         self.name = name
@@ -1261,11 +1281,12 @@ class SoapFaultBinding:
 
 
 class SoapHeaderBinding:
+
     def __init__(self, message, part, use, namespace=None, encodingStyle=None):
         if not use in ('literal', 'encoded'):
             raise WSDLError(
                 'Invalid use attribute value: %s' % use
-                )
+            )
         self.encodingStyle = encodingStyle
         self.namespace = namespace
         self.message = message
@@ -1280,16 +1301,19 @@ class SoapHeaderFaultBinding(SoapHeaderBinding):
 
 
 class HttpBinding:
+
     def __init__(self, verb):
         self.verb = verb
 
 
 class HttpAddressBinding:
+
     def __init__(self, location):
         self.location = location
 
 
 class HttpOperationBinding:
+
     def __init__(self, location):
         self.location = location
 
@@ -1303,17 +1327,20 @@ class HttpUrlEncodedBinding:
 
 
 class MimeContentBinding:
+
     def __init__(self, part=None, type=None):
         self.part = part
         self.type = type
 
 
 class MimeXmlBinding:
+
     def __init__(self, part=None):
         self.part = part
 
 
 class MimeMultipartRelatedBinding:
+
     def __init__(self):
         self.parts = []
 
@@ -1326,6 +1353,7 @@ class MimeMultipartRelatedBinding:
 
 
 class MimePartBinding:
+
     def __init__(self):
         self.items = []
 
@@ -1353,7 +1381,7 @@ class MimePartBinding:
                 if use is None:
                     raise WSDLError(
                         'Invalid soap:body binding element.'
-                        )
+                    )
                 ob = SoapBodyBinding(use, namespace, encstyle, parts)
                 self.items.append(ob)
                 continue
@@ -1397,7 +1425,7 @@ def GetDocumentation(element):
 
 def GetExtensions(element):
     return [item for item in DOM.getElements(element, None, None)
-        if item.namespaceURI != DOM.NS_WSDL]
+            if item.namespaceURI != DOM.NS_WSDL]
 
 
 def GetWSAActionFault(operation, name):
@@ -1446,8 +1474,8 @@ def FindExtensions(object, kind, t_type=type(())):
         result = []
         namespaceURI, name = kind
         return [item for item in object.extensions
-                if hasattr(item, 'nodeType') \
-                and DOM.nsUriMatch(namespaceURI, item.namespaceURI) \
+                if hasattr(item, 'nodeType')
+                and DOM.nsUriMatch(namespaceURI, item.namespaceURI)
                 and item.name == name]
     return [item for item in object.extensions if isinstance(item, kind)]
 
@@ -1457,8 +1485,8 @@ def FindExtension(object, kind, t_type=type(())):
         namespaceURI, name = kind
         for item in object.extensions:
             if hasattr(item, 'nodeType') \
-                and DOM.nsUriMatch(namespaceURI, item.namespaceURI) \
-                and item.name == name:
+                    and DOM.nsUriMatch(namespaceURI, item.namespaceURI) \
+                    and item.name == name:
                 return item
     else:
         for item in object.extensions:
@@ -1468,6 +1496,7 @@ def FindExtension(object, kind, t_type=type(())):
 
 
 class SOAPCallInfo:
+
     """SOAPCallInfo captures the important binding information about a
        SOAP operation, in a structure that is easier to work with than
        raw WSDL structures."""
@@ -1547,7 +1576,9 @@ class SOAPCallInfo:
 
 
 class ParameterInfo:
+
     """A ParameterInfo object captures parameter binding information."""
+
     def __init__(self, name, type, namespace=None, element_type=0):
         if element_type:
             self.element_type = 1
@@ -1562,7 +1593,9 @@ class ParameterInfo:
 
 
 class HeaderInfo(ParameterInfo):
+
     """A HeaderInfo object captures SOAP header binding information."""
+
     def __init__(self, name, type, namespace, element_type=None):
         ParameterInfo.__init__(self, name, type, namespace, element_type)
 
@@ -1614,7 +1647,7 @@ def callInfoFromWSDL(port, name):
                     part.element or part.type,
                     item.namespace,
                     element_type=part.element and 1 or 0
-                    )
+                )
                 header.encodingStyle = item.encodingStyle
 
             body = msgrole.findBinding(SoapBodyBinding)
@@ -1636,7 +1669,7 @@ def callInfoFromWSDL(port, name):
                     part.name,
                     part.element or part.type,
                     element_type=part.element and 1 or 0
-                    )
+                )
 
     if operation.output is not None:
         try:
@@ -1665,7 +1698,7 @@ def callInfoFromWSDL(port, name):
                     part.element or part.type,
                     item.namespace,
                     element_type=part.element and 1 or 0
-                    )
+                )
                 header.encodingStyle = item.encodingStyle
 
             body = msgrole.findBinding(SoapBodyBinding)
@@ -1688,6 +1721,6 @@ def callInfoFromWSDL(port, name):
                         part.name,
                         part.element or part.type,
                         element_type=part.element and 1 or 0
-                        )
+                    )
 
     return callinfo

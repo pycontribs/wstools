@@ -72,9 +72,9 @@ def toXMLname(string):
         if i < N - 1 and T[i] == u'_' and T[i + 1] == u'x':
             X.append(u'_x005F_')
         elif i == 0 and N >= 3 and \
-                 (T[0] == u'x' or T[0] == u'X') and \
-                 (T[1] == u'm' or T[1] == u'M') and \
-                 (T[2] == u'l' or T[2] == u'L'):
+                (T[0] == u'x' or T[0] == u'X') and \
+                (T[1] == u'm' or T[1] == u'M') and \
+                (T[2] == u'l' or T[2] == u'L'):
             X.append(u'_xFFFF_' + T[0])
         elif (not _NCNameChar(T[i])) or (i == 0 and not _NCNameStartChar(T[i])):
             X.append(_toUnicodeHex(T[i]))
