@@ -1,11 +1,59 @@
 language: python
 sudo: false
-env:
-  - TOX_ENV=py26
-  - TOX_ENV=py27
-  - TOX_ENV=py33
-  - TOX_ENV=py34
+os:
+- linux
+python:
+- '2.7'
+- '3.3'
+- '3.4'
 install:
-  - pip install tox
+- pip -q install coveralls six autopep8
 script: 
-  - tox -e $TOX_ENV
+- curl --silent -Lo travis_after_all.py https://raw.github.com/pycontribs/travis_after_all/master/travis_after_all.py && travis_wait python setup.py prerelease test
+- export PACKAGE_VERSION=$(python -c "from wstools.version import __version__; print(__version__)")
+after_success:
+  - python travis_after_all.py
+  - export $(cat .to_export_back)
+  - |
+      if [ "$BUILD_LEADER" = "YES" ]; then
+        if [ "$BUILD_AGGREGATE_STATUS" = "others_succeeded" ]; then
+          echo "All jobs succeeded! PUBLISHING..."
+        else
+          echo "Some jobs failed"
+        fi
+      fi
+  - coveralls
+  - python setup.py sdist bdist_wheel
+after_failure:
+  - python travis_after_all.py
+  - export $(cat .to_export_back)
+  - |
+      if [ "$BUILD_LEADER" = "YES" ]; then
+        if [ "$BUILD_AGGREGATE_STATUS" = "others_failed" ]; then
+          echo "All jobs failed"
+        else
+          echo "Some jobs failed"
+        fi
+      fi
+after_script:
+  - echo leader=$BUILD_LEADER status=$BUILD_AGGREGATE_STATUS
+branches:
+  only:
+  - master
+before_deploy:
+  - echo "before deploy..."
+deploy:
+  - provider: releases
+    api_key:
+      - secure: "gr9iOcQjdoAyUAim6FWKzJI9MBaJo9XKfGQGu7wdPXUFhg80Rp6GLJsowP+aU94NjXM1UQlVHDAy627WtjBlLH2SvmVEIIr7+UKBopBYuXG5jJ1m3wOZE+4f1Pqe9bqFc1DxgucqE8qF0sC24fIbNM2ToeyYrxrS6RoL2gRrX2I="
+    file: "dist/jira-$PACKAGE_VERSION.tar.gz"
+    skip_cleanup: true
+    on:
+      condition: "$BUILD_LEADER = YES"
+  - provider: pypi
+    user: sorin
+    password:
+      secure: "E0cjANF7SLBdYrsnWLK8X/xWznqkF0JrP/DVfDazPzUYH6ynFeneyofzNJQPLTLsqe1eKXhuUJ/Sbl+RHFB0ySo/j/7NfYd/9pm8hpUkGCvR09IwtvMLgWKp3k10NWab03o2GOkSJSrLvZofyZBGR40wwu2O9uXPCb2rvucCGbw="
+    distributions: "sdist bdist_wheel"
+    on:
+      condition: "$BUILD_LEADER = YES"

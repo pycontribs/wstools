@@ -129,6 +129,7 @@ class PreRelease(Command):
             raise RuntimeError(
                 "Current version of the package is equal or lower than the already published ones (PyPi). Increse version to be able to pass prerelease stage.")
 
+requires = ['autopep8', 'six', 'pep8', 'pytest-cov', 'pytest-pep8', 'setuptools', 'pytest', 'pytest-timeout']
 
 setup(
     name=NAME,
@@ -136,7 +137,9 @@ setup(
     cmdclass={'test': PyTest, 'release': Release, 'prerelease': PreRelease},
     packages=find_packages(exclude=['tests']),
     include_package_data=True,
-    install_requires=['docutils','six'],
+    tests_require=requires,
+    setup_requires=requires,
+    install_requires=requires,
 
     license='BSD',
     description="WSDL parsing services package for Web Services for Python. see" + url,
@@ -152,18 +155,14 @@ setup(
     keywords='api wstools wdsl web',
     classifiers=[
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.5',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Other Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Topic :: Internet :: WWW/HTTP',

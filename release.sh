@@ -1,19 +1,8 @@
 #!/bin/bash
 set -ex
 
-VERSION=$(python -c "from src.wstools.version import __version__ ; print __version__")
+VERSION=$(python -c "from wstools.version import __version__ ; print __version__")
 echo Preparing to release version $VERSION
-
-
-#source tox
-
-#pip install --upgrade pep8 autopep8 docutils
-
-echo === Testings ===
-if ! python setup.py test; then
-	echo "The test suite failed. Fix it!"
-	exit 1
-fi
 
 echo === Chechink that all changes are commited and pushed ===
 git pull -u
@@ -34,23 +23,31 @@ git diff
         exit 1
     fi
 
+git log --date=short --pretty=format:"%cd %s" > CHANGELOG
+git diff
 
-echo "Please don't run this as a user. This generates a new release for PyPI. Press ^C to exit or Enter to continue."
-read
+if [ -v PS1 ] ; then
+  echo "Automatic deployment"
+else
+  echo "Please don't run this as a user. This generates a new release for PyPI. Press ^C to exit or Enter to continue."
+  read
+fi
 
-
-# Clear old distutils stuff
-rm -rf build dist MANIFEST &> /dev/null
-
-# Build installers, etc. and upload to PyPI
-# python setup.py register sdist bdist_wininst upload
-
-#python setup.py register sdist build_sphinx upload upload_sphinx
-python setup.py register sdist upload
+git add CHANGELOG
+git commit -a "Auto-generating release notes."
 
 git tag -f -a $VERSION -m "Version $VERSION"
 git tag -f -a RELEASE -m "Current RELEASE"
 
-git push origin --tags
+NEW_VERSION="${VERSION%.*}.$((${VERSION##*.}+1))"
+set -ex
+sed -i ~ "s/${VERSION}/${NEW_VERSION}/" wstools/version.py
+
+git commit -a "Auto-increasing the version number after a release."
+
+# disables because this is done only by Travis CI from now, which calls this script after that.
+#python setup.py register sdist bdist_wheel build_sphinx upload_docs upload --sign
+
+git push --force origin --tags
 
 echo "done."
