@@ -2,22 +2,16 @@
 WSDL parsing services package for Web Services for Python
 =========================================================
 
-. image:: https://pypip.in/py_versions/wstools/badge.svg?style=flat
+. image:: https://img.shields.io/pypi/pyversions/wstools.svg
         :target: https://pypi.python.org/pypi/wstools/
 
-.. image:: https://pypip.in/license/wstools/badge.svg?style=flat
+.. image:: https://img.shields.io/github/license/pycontribs/wstools.svg 
         :target: https://pypi.python.org/pypi/wstools/
 
-.. image:: https://pypip.in/download/wstools/badge.svg?style=flat
+.. image:: https://img.shields.io/pypi/dm/wstools.svg
         :target: https://pypi.python.org/pypi/wstools/
 
-.. image:: https://pypip.in/version/wstools/badge.svg?style=flat
-        :target: https://pypi.python.org/pypi/wstools/
-
-.. image:: https://pypip.in/egg/wstools/badge.svg?style=flat
-        :target: https://pypi.python.org/pypi/wstools/
-
-.. image:: https://pypip.in/wheel/wstools/badge.svg?style=flat
+.. image:: https://img.shields.io/pypi/wheel/wstools.svg
         :target: https://pypi.python.org/pypi/wstools/
 
 ------------
@@ -25,7 +19,7 @@ WSDL parsing services package for Web Services for Python
 .. image:: https://api.travis-ci.org/pycontribs/wstools.svg?branch=master
         :target: https://travis-ci.org/pycontribs/wstools
 
-.. image:: https://pypip.in/status/wstools/badge.svg?style=flat
+.. image:: https://img.shields.io/pypi/status/wstools.svg
         :target: https://pypi.python.org/pypi/wstools/
 
 .. image:: https://img.shields.io/coveralls/pycontribs/wstools.svg
