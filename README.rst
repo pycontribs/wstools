@@ -2,7 +2,7 @@
 WSDL parsing services package for Web Services for Python
 =========================================================
 
-. image:: https://img.shields.io/pypi/pyversions/wstools.svg
+.. image:: https://img.shields.io/pypi/pyversions/wstools.svg
         :target: https://pypi.python.org/pypi/wstools/
 
 .. image:: https://img.shields.io/github/license/pycontribs/wstools.svg 
