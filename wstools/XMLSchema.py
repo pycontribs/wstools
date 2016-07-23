@@ -15,13 +15,15 @@
 
 ident = "$Id$"
 
-import types
-import weakref
-import sys
-import warnings
 import logging
-from .Namespaces import SCHEMA, XMLNS, SOAP, APACHE
-from .Utility import DOM, DOMException, Collection, SplitQName, basejoin
+import sys
+import types
+import warnings
+import weakref
+
+from .Namespaces import APACHE, SCHEMA, SOAP, XMLNS
+from .Utility import DOM, Collection, DOMException, SplitQName, basejoin
+
 try:
     from StringIO import StringIO
 except:
@@ -110,7 +112,7 @@ class SchemaReader:
         """
         reader = self.__readerClass(element)
         schema = XMLSchema(parent)
-        #HACK to keep a reference
+        # HACK to keep a reference
         schema.wsdl = parent
         schema.setBaseUrl(self.__base_url)
         schema.load(reader)
@@ -771,7 +773,7 @@ class XMLSchemaComponent(XMLBase, MarkerInterface):
                 ns = node.getNamespace(prefix)
                 if not ns:
                     raise SchemaError('no namespace for attribute prefix %s' % prefix)
-                if not ns in self.attributes:
+                if ns not in self.attributes:
                     self.attributes[ns] = {}
                 elif value in self.attributes[ns]:
                     raise SchemaError('attribute %s declared multiple times in %s' % (value, ns))
@@ -785,14 +787,14 @@ class XMLSchemaComponent(XMLBase, MarkerInterface):
             self.__checkAttributes()
         self.__setAttributeDefaults()
 
-        #set QNames
+        # set QNames
         for k in ['type', 'element', 'base', 'ref', 'substitutionGroup', 'itemType']:
             if k in self.attributes:
                 prefix, value = SplitQName(self.attributes.get(k))
                 self.attributes[k] = \
                     TypeDescriptionComponent((self.getXMLNS(prefix), value))
 
-        #Union, memberTypes is a whitespace separated list of QNames
+        # Union, memberTypes is a whitespace separated list of QNames
         for k in ['memberTypes']:
             if k in self.attributes:
                 qnames = self.attributes[k]
@@ -1273,17 +1275,17 @@ class XMLSchema(XMLSchemaComponent):
                         del slocd[import_ns]
                         continue
                     except SchemaError as ex:
-                        #warnings.warn(\
-                        #    '<import namespace="%s" schemaLocation=?>, %s'\
-                        #    %(import_ns, 'failed to load schema instance')
-                        #)
+                        # warnings.warn(\
+                        #     '<import namespace="%s" schemaLocation=?>, %s'\
+                        #     %(import_ns, 'failed to load schema instance')
+                        # )
                         self.logger.debug(ex)
                         del slocd[import_ns]
 
                         class _LazyEvalImport(str):
 
                             '''Lazy evaluation of import, replace entry in self.imports.'''
-                            #attributes = dict(namespace=import_ns)
+                            # attributes = dict(namespace=import_ns)
                             def getSchema(namespace):
                                 schema = slocd.get(namespace)
                                 if schema is None:
@@ -1417,7 +1419,7 @@ class XMLSchema(XMLSchemaComponent):
             reader._includes = self._parent().getIncludeSchemas()
             self._schema = schema
 
-            if not 'schemaLocation' in self.attributes:
+            if 'schemaLocation' not in self.attributes:
                 raise NoSchemaLocationWarning('no schemaLocation attribute in import')
 
             reader.loadFromURL(self.attributes.get('schemaLocation'), schema)
@@ -2684,7 +2686,7 @@ class ComplexType(XMLSchemaComponent,
 
                 indx = 0
                 num = len(contents)
-                #XXX ugly
+                # XXX ugly
                 if not num:
                     return
                 component = SplitQName(contents[indx].getTagName())[1]
@@ -3044,7 +3046,7 @@ class SimpleType(XMLSchemaComponent,
                 elif component in RestrictionMarker.facets:
                     self.facets.append(contents[indx])
                 else:
-                    raise SchemaError('Unknown component (%s)' % (i.getTagName()))
+                    raise SchemaError('Unknown component (%s)' % (contents[indx].getTagName()))
             self.content = tuple(content)
 
     class Union(XMLSchemaComponent,
@@ -3084,7 +3086,7 @@ class SimpleType(XMLSchemaComponent,
                     content.append(AnonymousSimpleType(self))
                     content[-1].fromDom(contents[indx])
                 else:
-                    raise SchemaError('Unknown component (%s)' % (i.getTagName()))
+                    raise SchemaError('Unknown component (%s)' % (contents[indx].getTagName()))
             self.content = tuple(content)
 
     class List(XMLSchemaComponent,
@@ -3137,7 +3139,7 @@ class SimpleType(XMLSchemaComponent,
                     self.content.fromDom(contents[indx])
                     break
                 else:
-                    raise SchemaError('Unknown component (%s)' % (i.getTagName()))
+                    raise SchemaError('Unknown component (%s)' % (contents[indx].getTagName()))
 
 
 class AnonymousSimpleType(SimpleType,

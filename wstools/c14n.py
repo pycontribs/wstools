@@ -1,4 +1,19 @@
 #! /usr/bin/env python
+import string
+import sys
+from xml.dom import Node
+try:
+    from xml.ns import XMLNS
+except:
+    class XMLNS:
+        BASE = "http://www.w3.org/2000/xmlns/"
+        XML = "http://www.w3.org/XML/1998/namespace"
+
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
+
 '''XML Canonicalization
 
 Patches Applied to xml.dom.ext.c14n:
@@ -47,29 +62,30 @@ or
   http://www.w3.org/Consortium/Legal/copyright-software-19980720
 '''
 
-import string
-from xml.dom import Node
-try:
-    from xml.ns import XMLNS
-except:
-    class XMLNS:
-        BASE = "http://www.w3.org/2000/xmlns/"
-        XML = "http://www.w3.org/XML/1998/namespace"
 
-try:
-    from io import StringIO
-except ImportError:
-    from cStringIO import StringIO
+def _attrs(E):
+    return (E.attributes and list(E.attributes.values())) or []
 
-_attrs = lambda E: (E.attributes and list(E.attributes.values())) or []
-_children = lambda E: E.childNodes or []
-_IN_XML_NS = lambda n: n.name.startswith("xmlns")
-_inclusive = lambda n: n.unsuppressedPrefixes is None
+
+def _children(E):
+    return E.childNodes or []
+
+
+def _IN_XML_NS(n):
+    return n.name.startswith("xmlns")
+
+
+def _inclusive(n):
+    return n.unsuppressedPrefixes is None
 
 
 # Does a document/PI has lesser/greater document order than the
 # first element?
 _LesserElement, _Element, _GreaterElement = list(range(3))
+
+if sys.version_info[0] > 2:
+    def cmp(a, b):
+        return (a > b) - (a < b)
 
 
 def _sorter(n1, n2):
@@ -146,8 +162,10 @@ def _inclusiveNamespacePrefixes(node, context, unsuppressedPrefixes):
 
     return inclusive, unused_namespace_dict
 
-#_in_subset = lambda subset, node: not subset or node in subset
-_in_subset = lambda subset, node: subset is None or node in subset  # rich's tweak
+
+# _in_subset = lambda subset, node: not subset or node in subset
+def _in_subset(subset, node):
+    return subset is None or node in subset  # rich's tweak
 
 
 class _implementation:
@@ -342,7 +360,7 @@ class _implementation:
 #                if not inclusive and a.prefix is not None and not ns_rendered.has_key('xmlns:%s' %a.prefix):
 #                    ns_local['xmlns:%s' %a.prefix] = ??
 
-            #add local xml:foo attributes to ancestor's xml:foo attributes
+            # add local xml:foo attributes to ancestor's xml:foo attributes
             xml_attrs.update(xml_attrs_local)
 
         # Render the node
@@ -356,7 +374,7 @@ class _implementation:
                     prefix = 'xmlns'
 
                 if prefix not in ns_rendered and prefix not in ns_local:
-                    if not prefix in ns_unused_inherited:
+                    if prefix not in ns_unused_inherited:
                         raise RuntimeError('For exclusive c14n, unable to map prefix "%s" in %s' % (
                             prefix, node))
 

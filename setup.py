@@ -37,7 +37,7 @@ class PyTest(TestCommand):
 
         # if we have pytest-cache module we enable the test failures first mode
         try:
-            import pytest_cache
+            import pytest_cache  # noqa
             self.pytest_args.append("--ff")
         except ImportError:
             pass
@@ -47,7 +47,7 @@ class PyTest(TestCommand):
             # when run manually we enable fail fast
             self.pytest_args.append("--maxfail=1")
         try:
-            import coveralls
+            import coveralls  # noqa
             self.pytest_args.append("--cov=%s" % NAME)
             self.pytest_args.extend(["--cov-report", "term"])
             self.pytest_args.extend(["--cov-report", "xml"])
@@ -63,14 +63,14 @@ class PyTest(TestCommand):
     def run_tests(self):
         # before running tests we need to run autopep8
         try:
-            r = subprocess.check_call(
+            subprocess.check_call(
                 "python -m autopep8 -r --in-place wstools/ tests/",
                 shell=True)
         except subprocess.CalledProcessError:
             logging.getLogger().warn('autopep8 is not installed so '
                                      'it will not be run')
         # import here, cause outside the eggs aren't loaded
-        import pytest
+        import pytest  # noqa
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
@@ -98,7 +98,8 @@ class Release(Command):
         released_version = data['info']['version']
         if released_version == __version__:
             raise RuntimeError(
-                "This version was already released, remove it from PyPi if you want to release it again or increase the version number. http://pypi.python.org/pypi/%s/" % NAME)
+                "This version was already released, remove it from PyPi if you want to release it"
+                " again or increase the version number. http://pypi.python.org/pypi/%s/" % NAME)
         elif released_version > __version__:
             raise RuntimeError("Cannot release a version (%s) smaller than the PyPI current release (%s)." % (
                 __version__, released_version))
@@ -163,8 +164,8 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Internet :: WWW/HTTP',
     ],
 )

@@ -13,9 +13,9 @@ cmd_folder = os.path.abspath(os.path.join(os.path.split(inspect.getfile(
     inspect.currentframe()))[0], ".."))
 if cmd_folder not in sys.path:
     sys.path.insert(0, cmd_folder)
-from wstools.Utility import DOM
-from wstools.WSDLTools import WSDLReader
-from wstools.TimeoutSocket import TimeoutError
+from wstools.Utility import DOM  # noqa E402
+from wstools.WSDLTools import WSDLReader  # noqa E402
+from wstools.TimeoutSocket import TimeoutError  # noqa E402
 try:
     import configparser
 except:
@@ -49,7 +49,7 @@ class WSDLToolsTestCase(unittest.TestCase):
             self.path = nameGenerator.__next__()
         else:
             self.path = nameGenerator.next()
-        #print(self.path)
+        # print(self.path)
         sys.stdout.flush()
 
     def __str__(self):
@@ -67,7 +67,7 @@ class WSDLToolsTestCase(unittest.TestCase):
         nspname = DOM.GetWSDLUri(version)
         for node in DOM.getElements(definition, tag_name, nspname):
             name = DOM.getAttr(node, key)
-            comp = component[name]
+            comp = component[name]  # noqa F841
             self.failUnlessEqual(eval('comp.%s' % key), name)
 
     def checkXSDCollection(self, tag_name, component, node, key='name'):

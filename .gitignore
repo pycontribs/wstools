@@ -5,3 +5,6 @@ dist
 .tox
 ~*.*
 build/
+.idea/inspectionProfiles/
+.python-version
+.vscode

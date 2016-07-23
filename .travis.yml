@@ -4,11 +4,12 @@ os:
 - linux
 python:
 - '2.7'
-- '3.3'
 - '3.4'
+- '3.5'
 install:
-- pip -q install coveralls six autopep8
-script: 
+- pip -q install -r requirements.txt
+- pip -q install -r requirements-dev.txt
+script:
 - curl --silent -Lo travis_after_all.py https://raw.github.com/pycontribs/travis_after_all/master/travis_after_all.py && travis_wait python setup.py prerelease test
 - export PACKAGE_VERSION=$(python -c "from wstools.version import __version__; print(__version__)")
 after_success:
@@ -40,20 +41,34 @@ after_script:
 branches:
   only:
   - master
+  - develop
 before_deploy:
   - echo "before deploy..."
 deploy:
   - provider: releases
     api_key:
       - secure: "gr9iOcQjdoAyUAim6FWKzJI9MBaJo9XKfGQGu7wdPXUFhg80Rp6GLJsowP+aU94NjXM1UQlVHDAy627WtjBlLH2SvmVEIIr7+UKBopBYuXG5jJ1m3wOZE+4f1Pqe9bqFc1DxgucqE8qF0sC24fIbNM2ToeyYrxrS6RoL2gRrX2I="
-    file: "dist/jira-$PACKAGE_VERSION.tar.gz"
+    file: "dist/wstools-$PACKAGE_VERSION.tar.gz"
     skip_cleanup: true
     on:
+      branch: master
       condition: "$BUILD_LEADER = YES"
+      tags: true
   - provider: pypi
     user: sorin
     password:
       secure: "E0cjANF7SLBdYrsnWLK8X/xWznqkF0JrP/DVfDazPzUYH6ynFeneyofzNJQPLTLsqe1eKXhuUJ/Sbl+RHFB0ySo/j/7NfYd/9pm8hpUkGCvR09IwtvMLgWKp3k10NWab03o2GOkSJSrLvZofyZBGR40wwu2O9uXPCb2rvucCGbw="
     distributions: "sdist bdist_wheel"
     on:
+      branch: master
+      condition: "$BUILD_LEADER = YES"
+  - provider: pypi
+    server: https://testpypi.python.org/pypi
+    user: sorins
+    password:
+      secure: "E0cjANF7SLBdYrsnWLK8X/xWznqkF0JrP/DVfDazPzUYH6ynFeneyofzNJQPLTLsqe1eKXhuUJ/Sbl+RHFB0ySo/j/7NfYd/9pm8hpUkGCvR09IwtvMLgWKp3k10NWab03o2GOkSJSrLvZofyZBGR40wwu2O9uXPCb2rvucCGbw="
+    distributions: "sdist bdist_wheel"
+    on:
+      branch: develop
+      tags: false
       condition: "$BUILD_LEADER = YES"
