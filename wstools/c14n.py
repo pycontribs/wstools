@@ -350,7 +350,8 @@ class _implementation:
                     n = "xmlns"        # DOM bug workaround
                 ns_local[n] = a.nodeValue
             elif a.namespaceURI == XMLNS.XML:
-                if inclusive or (in_subset and _in_subset(self.subset, a)):  # 020925 Test to see if attribute node in subset
+                # 020925 Test to see if attribute node in subset
+                if inclusive or (in_subset and _in_subset(self.subset, a)):
                     xml_attrs_local[a.nodeName] = a  # 0426
             else:
                 if _in_subset(self.subset, a):  # 020925 Test to see if attribute node in subset
@@ -428,7 +429,8 @@ class _implementation:
             W('>')
 
         # Push state, recurse, pop state.
-        state, self.state = self.state, (ns_local, ns_rendered, xml_attrs, ns_unused_inherited)
+        state, self.state = self.state, (ns_local,
+                                         ns_rendered, xml_attrs, ns_unused_inherited)
         for c in _children(node):
             _implementation.handlers[c.nodeType](self, c)
         self.state = state

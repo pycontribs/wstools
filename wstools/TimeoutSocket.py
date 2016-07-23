@@ -1,3 +1,7 @@
+import socket
+import select
+import errno
+
 """Based on code from timeout_socket.py, with some tweaks for compatibility.
    These tweaks should really be rolled back into timeout_socket, but it's
    not totally clear who is maintaining it at this point. In the meantime,
@@ -15,9 +19,6 @@
 
 ident = "$Id$"
 
-import socket
-import select
-import errno
 
 WSAEINVAL = getattr(errno, 'WSAEINVAL', 10022)
 

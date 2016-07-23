@@ -4,7 +4,7 @@
 # Joshua R. Boverhof, David W. Robertson, LBNL
 # See LBNLCopyright for copyright notice!
 ###########################################################################
-
+"""Unittests."""
 import sys
 import unittest
 import os
@@ -28,6 +28,7 @@ nameGenerator = None
 
 
 def makeTestSuite(section='services_by_file'):
+    """makeTestSuite."""
     global nameGenerator
 
     cp, numTests = setUpOptions(section)
@@ -39,6 +40,7 @@ def makeTestSuite(section='services_by_file'):
 
 
 class WSDLToolsTestCase(unittest.TestCase):
+    """"""
 
     def __init__(self, methodName='runTest'):
         unittest.TestCase.__init__(self, methodName)

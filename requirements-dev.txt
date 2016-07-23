@@ -1,9 +1,7 @@
-autopep8
 coverage
 coveralls
 flake8
-flake8-docstrings>=0.2.8
 flake8-pep257>=1.0.5
-nose
 pytest
-pytest-flake8
+pytest-cov
+pytest-timeout

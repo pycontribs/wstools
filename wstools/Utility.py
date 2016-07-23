@@ -946,7 +946,7 @@ class ElementProxy(Base, MessageInterface):
         self.node.setAttributeNS(namespaceURI, qualifiedName, value)
 
     #############################################
-    #General Methods
+    # General Methods
     #############################################
     def isFault(self):
         '''check to see if this is a soap:fault message.
@@ -1007,7 +1007,7 @@ class ElementProxy(Base, MessageInterface):
                                             doctype=doctype)
         self.node = document.childNodes[0]
 
-        #set up reserved namespace attributes
+        # set up reserved namespace attributes
         for prefix, nsuri in self.reserved_ns.items():
             self._setAttributeNS(namespaceURI=self._xmlns_nsuri,
                                  qualifiedName='%s:%s' % (self._xmlns_prefix,
@@ -1015,7 +1015,7 @@ class ElementProxy(Base, MessageInterface):
                                  value=nsuri)
 
     #############################################
-    #Methods for attributes
+    # Methods for attributes
     #############################################
     def hasAttribute(self, namespaceURI, localName):
         return self._dom.hasAttr(self._getNode(), name=localName,
@@ -1038,7 +1038,7 @@ class ElementProxy(Base, MessageInterface):
 
     def createAttributeNS(self, namespace, name, value):
         document = self._getOwnerDocument()
-        ##this function doesn't exist!! it has only two arguments
+        # this function doesn't exist!! it has only two arguments
         attrNode = document.createAttributeNS(namespace, name, value)
 
     def setAttributeNS(self, namespaceURI, localName, value):
@@ -1070,7 +1070,7 @@ class ElementProxy(Base, MessageInterface):
         self._setAttributeNS(XMLNS.BASE, 'xmlns:%s' % prefix, namespaceURI)
 
     #############################################
-    #Methods for elements
+    # Methods for elements
     #############################################
     def createElementNS(self, namespace, qname):
         '''
@@ -1157,7 +1157,7 @@ class ElementProxy(Base, MessageInterface):
         return self._dom.getElementText(self.node, preserve_ws=True)
 
     #############################################
-    #Methods for text nodes
+    # Methods for text nodes
     #############################################
     def createAppendTextNode(self, pyobj):
         node = self.createTextNode(pyobj)
@@ -1170,7 +1170,7 @@ class ElementProxy(Base, MessageInterface):
         return ElementProxy(self.sw, node)
 
     #############################################
-    #Methods for retrieving namespaceURI's
+    # Methods for retrieving namespaceURI's
     #############################################
     def findNamespaceURI(self, qualifiedName):
         parts = SplitQName(qualifiedName)

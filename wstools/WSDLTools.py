@@ -150,8 +150,10 @@ class WSDL:
         child = DOM.getElement(self.document, None)
         child.setAttributeNS(None, 'targetNamespace', self.targetNamespace)
         child.setAttributeNS(XMLNS.BASE, 'xmlns:wsdl', namespaceURI)
-        child.setAttributeNS(XMLNS.BASE, 'xmlns:xsd', 'http://www.w3.org/1999/XMLSchema')
-        child.setAttributeNS(XMLNS.BASE, 'xmlns:soap', 'http://schemas.xmlsoap.org/wsdl/soap/')
+        child.setAttributeNS(XMLNS.BASE, 'xmlns:xsd',
+                             'http://www.w3.org/1999/XMLSchema')
+        child.setAttributeNS(XMLNS.BASE, 'xmlns:soap',
+                             'http://schemas.xmlsoap.org/wsdl/soap/')
         child.setAttributeNS(XMLNS.BASE, 'xmlns:tns', self.targetNamespace)
 
         if self.name:
@@ -253,7 +255,7 @@ class WSDL:
                 docs = GetDocumentation(element)
                 ptype = self.addPortType(name, docs, targetNamespace)
                 #operations = DOM.getElements(element, 'operation', NS_WSDL)
-                #ptype.load(operations)
+                # ptype.load(operations)
                 ptype.load(element)
                 continue
 
@@ -290,9 +292,10 @@ class WSDL:
                 reader = SchemaReader(base_url=base_location)
                 for item in DOM.getElements(element, None, None):
                     if item.localName == 'schema':
-                        schema = reader.loadFromNode(WSDLToolsAdapter(self), item)
+                        schema = reader.loadFromNode(
+                            WSDLToolsAdapter(self), item)
                         # XXX <types> could have been imported
-                        #schema.setBaseUrl(self.location)
+                        # schema.setBaseUrl(self.location)
                         schema.setBaseUrl(base_location)
                         self.types.addSchema(schema)
                     else:
@@ -364,7 +367,7 @@ class WSDL:
                         attr = attrsNS[attrkey].cloneNode(1)
                         child.setAttributeNode(attr)
 
-                #XXX Quick Hack, should be in WSDL Namespace.
+                # XXX Quick Hack, should be in WSDL Namespace.
                 if child.localName == 'import':
                     rlocation = child.getAttributeNS(None, 'location')
                     alocation = basejoin(location, rlocation)
@@ -717,7 +720,8 @@ class Operation(Element):
         return self.input
 
     def setOutput(self, message, name='', documentation='', action=None):
-        self.output = MessageRole('output', message, name, documentation, action)
+        self.output = MessageRole(
+            'output', message, name, documentation, action)
         self.output.parent = weakref.ref(self)
         return self.output
 
@@ -822,7 +826,7 @@ class Binding(Element):
 
             item = DOM.getElement(element, 'input', None, None)
             if item is not None:
-                #TODO: addInputBinding?
+                # TODO: addInputBinding?
                 mbinding = MessageRoleBinding('input')
                 mbinding.documentation = GetDocumentation(item)
                 opbinding.input = mbinding
@@ -1187,7 +1191,8 @@ class SoapBinding:
     def toDom(self, node):
         wsdl = self.getWSDL()
         ep = ElementProxy(None, node)
-        epc = ep.createAppendElement(DOM.GetWSDLSoapBindingUri(wsdl.version), 'binding')
+        epc = ep.createAppendElement(
+            DOM.GetWSDLSoapBindingUri(wsdl.version), 'binding')
         if self.transport:
             epc.setAttributeNS(None, "transport", self.transport)
         if self.style:
@@ -1205,7 +1210,8 @@ class SoapAddressBinding:
     def toDom(self, node):
         wsdl = self.getWSDL()
         ep = ElementProxy(None, node)
-        epc = ep.createAppendElement(DOM.GetWSDLSoapBindingUri(wsdl.version), 'address')
+        epc = ep.createAppendElement(
+            DOM.GetWSDLSoapBindingUri(wsdl.version), 'address')
         epc.setAttributeNS(None, "location", self.location)
 
 
@@ -1221,7 +1227,8 @@ class SoapOperationBinding:
     def toDom(self, node):
         wsdl = self.getWSDL()
         ep = ElementProxy(None, node)
-        epc = ep.createAppendElement(DOM.GetWSDLSoapBindingUri(wsdl.version), 'operation')
+        epc = ep.createAppendElement(
+            DOM.GetWSDLSoapBindingUri(wsdl.version), 'operation')
         if self.soapAction:
             epc.setAttributeNS(None, 'soapAction', self.soapAction)
         if self.style:
@@ -1248,7 +1255,8 @@ class SoapBodyBinding:
     def toDom(self, node):
         wsdl = self.getWSDL()
         ep = ElementProxy(None, node)
-        epc = ep.createAppendElement(DOM.GetWSDLSoapBindingUri(wsdl.version), 'body')
+        epc = ep.createAppendElement(
+            DOM.GetWSDLSoapBindingUri(wsdl.version), 'body')
         epc.setAttributeNS(None, "use", self.use)
         epc.setAttributeNS(None, "namespace", self.namespace)
 
@@ -1271,7 +1279,8 @@ class SoapFaultBinding:
     def toDom(self, node):
         wsdl = self.getWSDL()
         ep = ElementProxy(None, node)
-        epc = ep.createAppendElement(DOM.GetWSDLSoapBindingUri(wsdl.version), 'body')
+        epc = ep.createAppendElement(
+            DOM.GetWSDLSoapBindingUri(wsdl.version), 'body')
         epc.setAttributeNS(None, "use", self.use)
         epc.setAttributeNS(None, "name", self.name)
         if self.namespace is not None:

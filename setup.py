@@ -9,6 +9,7 @@ import codecs
 
 from setuptools import setup, find_packages, Command
 from setuptools.command.test import test as TestCommand
+from pip.req import parse_requirements
 
 NAME = "wstools"
 url = "https://github.com/pycontribs/wstools.git"
@@ -46,14 +47,6 @@ class PyTest(TestCommand):
         if sys.stdout.isatty():
             # when run manually we enable fail fast
             self.pytest_args.append("--maxfail=1")
-        try:
-            import coveralls  # noqa
-            self.pytest_args.append("--cov=%s" % NAME)
-            self.pytest_args.extend(["--cov-report", "term"])
-            self.pytest_args.extend(["--cov-report", "xml"])
-
-        except ImportError:
-            pass
 
     def finalize_options(self):
         TestCommand.finalize_options(self)
@@ -130,7 +123,12 @@ class PreRelease(Command):
             raise RuntimeError(
                 "Current version of the package is equal or lower than the already published ones (PyPi). Increse version to be able to pass prerelease stage.")
 
-requires = ['autopep8', 'six', 'pep8', 'pytest-cov', 'pytest-pep8', 'setuptools', 'pytest', 'pytest-timeout']
+
+def get_requirements(*path):
+    req_path = os.path.join(*path)
+    reqs = parse_requirements(req_path, session=False)
+    return [str(ir.req) for ir in reqs]
+
 
 setup(
     name=NAME,
@@ -138,9 +136,9 @@ setup(
     cmdclass={'test': PyTest, 'release': Release, 'prerelease': PreRelease},
     packages=find_packages(exclude=['tests']),
     include_package_data=True,
-    tests_require=requires,
-    setup_requires=requires,
-    install_requires=requires,
+    tests_require=get_requirements(base_path, 'requirements-dev.txt'),
+    setup_requires=['setuptools'],
+    install_requires=get_requirements(base_path, 'requirements.txt'),
 
     license='BSD',
     description="WSDL parsing services package for Web Services for Python. see" + url,
