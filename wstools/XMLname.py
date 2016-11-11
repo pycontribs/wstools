@@ -1,4 +1,5 @@
 import re
+from six import text_type
 
 """Translate strings to and from SOAP 1.2 XML name encoding
 
@@ -64,7 +65,7 @@ def toXMLname(string):
         prefix = None
         localname = string
 
-    T = unicode(localname)
+    T = text_type(localname)
 
     N = len(localname)
     X = []

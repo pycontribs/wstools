@@ -4,8 +4,8 @@
 # Joshua R. Boverhof, David W. Robertson, LBNL
 # See LBNLCopyright for copyright notice!
 ###########################################################################
-import unittest
 import test_wsdl
+import unittest
 
 
 def makeTestSuite():

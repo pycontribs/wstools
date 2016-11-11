@@ -49,7 +49,7 @@ class TimeoutSocket:
         try:
             # Non-blocking mode
             sock.setblocking(0)
-            apply(sock.connect, addr)
+            sock.connect(*addr)
             sock.setblocking(timeout != 0)
             return 1
         except socket.error as why:
@@ -66,7 +66,7 @@ class TimeoutSocket:
             r, w, e = select.select([], [sock], [], timeout)
             if w:
                 try:
-                    apply(sock.connect, addr)
+                    sock.connect(*addr)
                     return 1
                 except socket.error as why:
                     if len(why.args) == 1:

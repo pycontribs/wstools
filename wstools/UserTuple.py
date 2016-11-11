@@ -54,7 +54,7 @@ class UserTuple:
         self.data = ()
         if inittuple is not None:
             # XXX should this accept an arbitrary sequence?
-            if type(inittuple) == type(self.data):
+            if isinstance(inittuple, tuple):
                 self.data = inittuple
             elif isinstance(inittuple, UserTuple):
                 # this results in
@@ -94,7 +94,7 @@ class UserTuple:
             return other
 
     def __cmp__(self, other):
-        return cmp(self.data, self.__cast(other))
+        return (self.data > self.__cast(other)) - (self.data < self.__cast(other))
 
     def __contains__(self, item):
         return item in self.data

@@ -5,20 +5,20 @@
 # See LBNLCopyright for copyright notice!
 ###########################################################################
 """Unittests."""
+import inspect
+import os
 import sys
 import unittest
-import os
-import inspect
 cmd_folder = os.path.abspath(os.path.join(os.path.split(inspect.getfile(
     inspect.currentframe()))[0], ".."))
 if cmd_folder not in sys.path:
     sys.path.insert(0, cmd_folder)
+from wstools.TimeoutSocket import TimeoutError  # noqa E402
 from wstools.Utility import DOM  # noqa E402
 from wstools.WSDLTools import WSDLReader  # noqa E402
-from wstools.TimeoutSocket import TimeoutError  # noqa E402
 try:
     import configparser
-except:
+except ImportError:
     from six.moves import configparser
 
 cwd = 'tests'
@@ -88,38 +88,38 @@ class WSDLToolsTestCase(unittest.TestCase):
             print("connection timed out")
             sys.stdout.flush()
             return
-        except:
+        except Exception:
             self.path = self.path + ": load failed, unable to start"
             raise
 
         try:
             self.checkWSDLCollection('service', self.wsdl.services)
-        except:
+        except Exception:
             self.path = self.path + ": wsdl.services"
             raise
 
         try:
             self.checkWSDLCollection('message', self.wsdl.messages)
-        except:
+        except Exception:
             self.path = self.path + ": wsdl.messages"
             raise
 
         try:
             self.checkWSDLCollection('portType', self.wsdl.portTypes)
-        except:
+        except Exception:
             self.path = self.path + ": wsdl.portTypes"
             raise
 
         try:
             self.checkWSDLCollection('binding', self.wsdl.bindings)
-        except:
+        except Exception:
             self.path = self.path + ": wsdl.bindings"
             raise
 
         try:
             self.checkWSDLCollection('import', self.wsdl.imports,
                                      key='namespace')
-        except:
+        except Exception:
             self.path = self.path + ": wsdl.imports"
             raise
 
@@ -139,7 +139,7 @@ class WSDLToolsTestCase(unittest.TestCase):
                     self.schemaAttributeGroupDeclarations(schema, snode)
                     self.schemaElementDeclarations(schema, snode)
                     self.schemaTypeDefinitions(schema, snode)
-        except:
+        except Exception:
             self.path = self.path + ": wsdl.types"
             raise
 

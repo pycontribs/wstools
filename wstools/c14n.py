@@ -4,8 +4,8 @@ import sys
 from xml.dom import Node
 try:
     from xml.ns import XMLNS
-except:
-    class XMLNS:
+except ImportError:
+    class XMLNS(object):
         BASE = "http://www.w3.org/2000/xmlns/"
         XML = "http://www.w3.org/XML/1998/namespace"
 
@@ -90,7 +90,9 @@ if sys.version_info[0] > 2:
 
 def _sorter(n1, n2):
     '''_sorter(n1,n2) -> int
-    Sorting predicate for non-NS attributes.'''
+
+    Sorting predicate for non-NS attributes.
+    '''
 
     i = cmp(n1.namespaceURI, n2.namespaceURI)
     if i:
@@ -100,7 +102,9 @@ def _sorter(n1, n2):
 
 def _sorter_ns(n1, n2):
     '''_sorter_ns((n,v),(n,v)) -> int
-    "(an empty namespace URI is lexicographically least)."'''
+
+    "(an empty namespace URI is lexicographically least)."
+    '''
 
     if n1[0] == 'xmlns':
         return -1
@@ -111,7 +115,9 @@ def _sorter_ns(n1, n2):
 
 def _utilized(n, node, other_attrs, unsuppressedPrefixes):
     '''_utilized(n, node, other_attrs, unsuppressedPrefixes) -> boolean
-    Return true if that nodespace is utilized within the node'''
+
+    Return true if that nodespace is utilized within the node
+    '''
     if n.startswith('xmlns:'):
         n = n[6:]
     elif n.startswith('xmlns'):
@@ -133,8 +139,10 @@ def _utilized(n, node, other_attrs, unsuppressedPrefixes):
 
 def _inclusiveNamespacePrefixes(node, context, unsuppressedPrefixes):
     '''http://www.w3.org/TR/xml-exc-c14n/
+
     InclusiveNamespaces PrefixList parameter, which lists namespace prefixes that
-    are handled in the manner described by the Canonical XML Recommendation'''
+    are handled in the manner described by the Canonical XML Recommendation
+    '''
     inclusive = []
     if node.prefix:
         usedPrefixes = ['xmlns:%s' % node.prefix]
@@ -168,10 +176,13 @@ def _in_subset(subset, node):
     return subset is None or node in subset  # rich's tweak
 
 
-class _implementation:
+class _implementation(object):
 
-    '''Implementation class for C14N. This accompanies a node during it's
-    processing and includes the parameters and processing state.'''
+    '''Implementation class for C14N.
+
+    This accompanies a node during it's
+    processing and includes the parameters and processing state.
+    '''
 
     # Handler for each node type; populated during module instantiation.
     handlers = {}
@@ -205,9 +216,11 @@ class _implementation:
 
     def _inherit_context(self, node):
         '''_inherit_context(self, node) -> list
+
         Scan ancestors of attribute and namespace context.  Used only
         for single element node canonicalization, not for subset
-        canonicalization.'''
+        canonicalization.
+        '''
 
         # Collect the initial list of xml:foo attributes.
         xmlattrs = list(filter(_IN_XML_NS, _attrs(node)))
@@ -225,9 +238,11 @@ class _implementation:
 
     def _do_document(self, node):
         '''_do_document(self, node) -> None
+
         Process a document node. documentOrder holds whether the document
         element has been encountered such that PIs/comments can be written
-        as specified.'''
+        as specified.
+        '''
 
         self.documentOrder = _LesserElement
         for child in node.childNodes:
@@ -247,8 +262,10 @@ class _implementation:
 
     def _do_text(self, node):
         '''_do_text(self, node) -> None
+
         Process a text or CDATA node.  Render various special characters
-        as their C14N entity representations.'''
+        as their C14N entity representations.
+        '''
         if not _in_subset(self.subset, node):
             return
         s = string.replace(node.data, "&", "&amp;")
@@ -262,6 +279,7 @@ class _implementation:
 
     def _do_pi(self, node):
         '''_do_pi(self, node) -> None
+
         Process a PI node. Render a leading or trailing #xA if the
         document order of the PI is greater or lesser (respectively)
         than the document element.
@@ -284,6 +302,7 @@ class _implementation:
 
     def _do_comment(self, node):
         '''_do_comment(self, node) -> None
+
         Process a comment node. Render a leading or trailing #xA if the
         document order of the comment is greater or lesser (respectively)
         than the document element.
@@ -303,7 +322,9 @@ class _implementation:
 
     def _do_attr(self, n, value):
         ''''_do_attr(self, node) -> None
-        Process an attribute.'''
+
+        Process an attribute.
+        '''
 
         W = self.write
         W(' ')
@@ -320,7 +341,9 @@ class _implementation:
 
     def _do_element(self, node, initial_other_attrs=[], unused=None):
         '''_do_element(self, node, initial_other_attrs = [], unused = {}) -> None
-        Process an element (and its children).'''
+
+        Process an element (and its children).
+        '''
 
         # Get state (from the stack) make local copies.
         #   ns_parent -- NS declarations in parent
@@ -357,7 +380,7 @@ class _implementation:
                 if _in_subset(self.subset, a):  # 020925 Test to see if attribute node in subset
                     other_attrs.append(a)
 
-#                # TODO: exclusive, might need to define xmlns:prefix here
+#                # exclusive, might need to define xmlns:prefix here
 #                if not inclusive and a.prefix is not None and not ns_rendered.has_key('xmlns:%s' %a.prefix):
 #                    ns_local['xmlns:%s' %a.prefix] = ??
 
