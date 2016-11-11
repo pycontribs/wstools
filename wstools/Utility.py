@@ -16,9 +16,7 @@
 ident = "$Id$"
 
 import copy
-import sys
 import types
-import string
 import six
 
 import socket
@@ -26,18 +24,18 @@ import weakref
 from os.path import isfile
 import urllib
 try:
-    from urlparse import urljoin as basejoin
-except:
-    from urllib.parse import urljoin as basejoin
+    from urlparse import urljoin as basejoin  # noqa
+except ImportError:
+    from urllib.parse import urljoin as basejoin  # noqa
 
 try:
     from UserDict import UserDict
-    from UserDict import DictMixin
+    from UserDict import DictMixin  # noqa
 except ImportError:
     from collections import UserDict
-    from collections import MutableMapping as DictMixin
+    from collections import MutableMapping as DictMixin  # noqa
 
-from .TimeoutSocket import TimeoutSocket, TimeoutError
+from .TimeoutSocket import TimeoutSocket, TimeoutError  # noqa
 
 try:
     from io import StringIO
@@ -50,9 +48,44 @@ except ImportError:
     from urllib.parse import urlparse
 
 try:
-    from httplib import HTTPConnection, HTTPSConnection
+    from httplib import HTTPConnection, HTTPSConnection, FakeSocket, _CS_REQ_SENT
 except ImportError:
-    from http.client import HTTPConnection, HTTPSConnection
+    from http.client import HTTPConnection, HTTPSConnection, _CS_REQ_SENT
+    import io
+
+    class FakeSocket(io.BytesIO):
+        io_refs = 1
+
+        def sendall(self, data):
+            FakeHTTPConnection.buf = data
+
+        def makefile(self, *args, **kwds):
+            self.io_refs += 1
+            return self
+
+        def read(self, amt=None):
+            if self.closed:
+                return b""
+            return io.BytesIO.read(self, amt)
+
+        def readline(self, length=None):
+            if self.closed:
+                return b""
+            return io.BytesIO.readline(self, length)
+
+        def close(self):
+            self.io_refs -= 1
+            if self.io_refs == 0:
+                io.BytesIO.close(self)
+
+    class FakeHTTPConnection(HTTPConnection):
+
+        # buffer to store data for verification in urlopen tests.
+        buf = None
+
+        def connect(self):
+            self.sock = FakeSocket(self.fakedata)
+            type(self).fakesock = self.sock
 
 try:
     from exceptions import Exception
@@ -177,7 +210,7 @@ class TimeoutHTTPS(HTTPSConnection):
         sock.connect((self.host, self.port))
         realsock = getattr(sock.sock, '_sock', sock.sock)
         ssl = socket.ssl(realsock, self.key_file, self.cert_file)
-        self.sock = httplib.FakeSocket(sock, ssl)
+        self.sock = FakeSocket(sock, ssl)
 
 
 def urlopen(url, timeout=20, redirects=None):
@@ -185,7 +218,7 @@ def urlopen(url, timeout=20, redirects=None):
        Note that this supports GET only."""
     scheme, host, path, params, query, frag = urlparse(url)
 
-    if not scheme in ('http', 'https'):
+    if scheme not in ('http', 'https'):
         return urllib.urlopen(url)
     if params:
         path = '%s;%s' % (path, params)
@@ -222,7 +255,7 @@ def urlopen(url, timeout=20, redirects=None):
         response = conn.getresponse()
         if response.status != 100:
             break
-        conn._HTTPConnection__state = httplib._CS_REQ_SENT
+        conn._HTTPConnection__state = _CS_REQ_SENT
         conn._HTTPConnection__response = None
 
     status = response.status
@@ -473,7 +506,7 @@ class DOM:
                     return child
         if default != DEFAULT:
             return default
-        raise KeyError(name)
+        raise KeyError(node)
 
     def getMappingById(self, document, depth=None, element=None,
                        mapping=None, level=1):
@@ -618,7 +651,7 @@ class DOM:
     def findTargetNS(self, node):
         """Return the defined target namespace uri for the given node."""
         attrget = self.getAttr
-        attrkey = (self.NS_XMLNS, 'xmlns')
+        # attrkey = (self.NS_XMLNS, 'xmlns')
         DOCUMENT_NODE = node.DOCUMENT_NODE
         ELEMENT_NODE = node.ELEMENT_NODE
         while 1:
@@ -891,7 +924,7 @@ class ElementProxy(Base, MessageInterface):
             prefix = 'ns%d' % self._indx
             try:
                 self._dom.findNamespaceURI(prefix, self._getNode())
-            except DOMException as ex:
+            except DOMException:
                 break
         return prefix
 
@@ -905,7 +938,7 @@ class ElementProxy(Base, MessageInterface):
             if node and (node.nodeType == node.ELEMENT_NODE) and \
                     (nsuri == self._dom.findDefaultNS(node)):
                 return None
-        except DOMException as ex:
+        except DOMException:
             pass
         if nsuri == XMLNS.XML:
             return self._xml_prefix
@@ -946,7 +979,7 @@ class ElementProxy(Base, MessageInterface):
         self.node.setAttributeNS(namespaceURI, qualifiedName, value)
 
     #############################################
-    #General Methods
+    # General Methods
     #############################################
     def isFault(self):
         '''check to see if this is a soap:fault message.
@@ -956,7 +989,7 @@ class ElementProxy(Base, MessageInterface):
     def getPrefix(self, namespaceURI):
         try:
             prefix = self._getPrefix(node=self.node, nsuri=namespaceURI)
-        except NamespaceError as ex:
+        except NamespaceError:
             prefix = self._getUniquePrefix()
             self.setNamespaceAttribute(prefix, namespaceURI)
         return prefix
@@ -1007,7 +1040,7 @@ class ElementProxy(Base, MessageInterface):
                                             doctype=doctype)
         self.node = document.childNodes[0]
 
-        #set up reserved namespace attributes
+        # set up reserved namespace attributes
         for prefix, nsuri in self.reserved_ns.items():
             self._setAttributeNS(namespaceURI=self._xmlns_nsuri,
                                  qualifiedName='%s:%s' % (self._xmlns_prefix,
@@ -1015,7 +1048,7 @@ class ElementProxy(Base, MessageInterface):
                                  value=nsuri)
 
     #############################################
-    #Methods for attributes
+    # Methods for attributes
     #############################################
     def hasAttribute(self, namespaceURI, localName):
         return self._dom.hasAttr(self._getNode(), name=localName,
@@ -1038,8 +1071,8 @@ class ElementProxy(Base, MessageInterface):
 
     def createAttributeNS(self, namespace, name, value):
         document = self._getOwnerDocument()
-        ##this function doesn't exist!! it has only two arguments
-        attrNode = document.createAttributeNS(namespace, name, value)
+        # this function doesn't exist!! it has only two arguments
+        document.createAttributeNS(namespace, name, value)
 
     def setAttributeNS(self, namespaceURI, localName, value):
         '''
@@ -1053,7 +1086,7 @@ class ElementProxy(Base, MessageInterface):
         if namespaceURI:
             try:
                 prefix = self.getPrefix(namespaceURI)
-            except KeyError as ex:
+            except KeyError:
                 prefix = 'ns2'
                 self.setNamespaceAttribute(prefix, namespaceURI)
         qualifiedName = localName
@@ -1070,7 +1103,7 @@ class ElementProxy(Base, MessageInterface):
         self._setAttributeNS(XMLNS.BASE, 'xmlns:%s' % prefix, namespaceURI)
 
     #############################################
-    #Methods for elements
+    # Methods for elements
     #############################################
     def createElementNS(self, namespace, qname):
         '''
@@ -1157,7 +1190,7 @@ class ElementProxy(Base, MessageInterface):
         return self._dom.getElementText(self.node, preserve_ws=True)
 
     #############################################
-    #Methods for text nodes
+    # Methods for text nodes
     #############################################
     def createAppendTextNode(self, pyobj):
         node = self.createTextNode(pyobj)
@@ -1170,13 +1203,13 @@ class ElementProxy(Base, MessageInterface):
         return ElementProxy(self.sw, node)
 
     #############################################
-    #Methods for retrieving namespaceURI's
+    # Methods for retrieving namespaceURI's
     #############################################
     def findNamespaceURI(self, qualifiedName):
         parts = SplitQName(qualifiedName)
         element = self._getNode()
         if len(parts) == 1:
-            return (self._dom.findTargetNS(element), value)
+            return (self._dom.findTargetNS(element), None)
         return self._dom.findNamespaceURI(parts[0], element)
 
     def resolvePrefix(self, prefix):
@@ -1250,7 +1283,7 @@ class CollectionNS(UserDict):
         self.list.append(item)
         targetNamespace = getattr(item, 'targetNamespace',
                                   self.parent().targetNamespace)
-        if not targetNamespace in self.data:
+        if targetNamespace not in self.data:
             self.data[targetNamespace] = {}
         self.data[targetNamespace][key] = item
 

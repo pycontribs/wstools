@@ -1,3 +1,7 @@
+import socket
+import select
+import errno
+
 """Based on code from timeout_socket.py, with some tweaks for compatibility.
    These tweaks should really be rolled back into timeout_socket, but it's
    not totally clear who is maintaining it at this point. In the meantime,
@@ -15,9 +19,6 @@
 
 ident = "$Id$"
 
-import socket
-import select
-import errno
 
 WSAEINVAL = getattr(errno, 'WSAEINVAL', 10022)
 
@@ -48,7 +49,7 @@ class TimeoutSocket:
         try:
             # Non-blocking mode
             sock.setblocking(0)
-            apply(sock.connect, addr)
+            sock.connect(*addr)
             sock.setblocking(timeout != 0)
             return 1
         except socket.error as why:
@@ -65,7 +66,7 @@ class TimeoutSocket:
             r, w, e = select.select([], [sock], [], timeout)
             if w:
                 try:
-                    apply(sock.connect, addr)
+                    sock.connect(*addr)
                     return 1
                 except socket.error as why:
                     if len(why.args) == 1:

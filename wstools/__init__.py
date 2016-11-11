@@ -3,5 +3,5 @@
 
 ident = "$Id$"
 
-from . import WSDLTools
-from . import XMLname
+from . import WSDLTools  # noqa
+from . import XMLname   # noqa

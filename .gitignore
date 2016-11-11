@@ -5,3 +5,10 @@ dist
 .tox
 ~*.*
 build/
+.idea/
+.python-version
+.vscode
+/.idea/misc.xml
+/.idea/modules.xml
+/.cache
+/.eggs

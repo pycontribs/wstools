@@ -1,3 +1,6 @@
+import re
+from six import text_type
+
 """Translate strings to and from SOAP 1.2 XML name encoding
 
 Implements rules for mapping application defined name to XML names
@@ -14,8 +17,6 @@ Version 0.9.0
 """
 
 ident = "$Id$"
-
-from re import *
 
 
 def _NCNameChar(x):
@@ -64,7 +65,7 @@ def toXMLname(string):
         prefix = None
         localname = string
 
-    T = unicode(localname)
+    T = text_type(localname)
 
     N = len(localname)
     X = []
@@ -89,11 +90,11 @@ def toXMLname(string):
 def fromXMLname(string):
     """Convert XML name to unicode string."""
 
-    retval = sub(r'_xFFFF_', '', string)
+    retval = re.sub(r'_xFFFF_', '', string)
 
     def fun(matchobj):
         return _fromUnicodeHex(matchobj.group(0))
 
-    retval = sub(r'_x[0-9A-Fa-f]{4}_', fun, retval)
+    retval = re.sub(r'_x[0-9A-Fa-f]{4}_', fun, retval)
 
     return retval
