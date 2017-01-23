@@ -1688,9 +1688,9 @@ def callInfoFromWSDL(port, name):
         try:
             message = messages[operation.output.message]
         except KeyError:
-            if self.strict:
+            if wsdl.strict:
                 raise RuntimeError(
-                    "Recieved message not defined in the WSDL schema: %s" %
+                    "Received message not defined in the WSDL schema: %s" %
                     operation.output.message)
             else:
                 message = wsdl.addMessage(operation.output.message)
