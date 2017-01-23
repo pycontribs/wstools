@@ -595,10 +595,10 @@ class XMLSchemaComponent(XMLBase, MarkerInterface):
         if self._parent:
             self._parent = weakref.ref(parent)
 
-        if not self.__class__ == XMLSchemaComponent\
-           and not (isinstance(self.__class__.required, type(XMLSchemaComponent.required))
-                    and isinstance(self.__class__.attributes, type(XMLSchemaComponent.attributes))
-                    and isinstance(self.__class__.contents, type(XMLSchemaComponent.contents))):
+        if (not self.__class__ == XMLSchemaComponent and
+            not (isinstance(self.__class__.required, type(XMLSchemaComponent.required)) and
+                 isinstance(self.__class__.attributes, type(XMLSchemaComponent.attributes)) and
+                 isinstance(self.__class__.contents, type(XMLSchemaComponent.contents)))):
             raise RuntimeError(
                 'Bad type for a class variable in %s' % self.__class__)
 
@@ -1142,9 +1142,16 @@ class XMLSchema(XMLSchemaComponent):
         self.__node = None
         self.targetNamespace = None
         XMLSchemaComponent.__init__(self, parent)
-        f = lambda k: k.attributes['name']
-        ns = lambda k: k.attributes['namespace']
-        sl = lambda k: k.attributes['schemaLocation']
+
+        def f(k):
+            return k.attributes['name']
+
+        def ns(k):
+            return k.attributes['namespace']
+
+        def sl(k):
+            return k.attributes['schemaLocation']
+
         self.includes = Collection(self, key=sl)
         self.imports = Collection(self, key=ns)
         self.elements = Collection(self, key=f)
