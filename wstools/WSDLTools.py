@@ -1614,7 +1614,7 @@ class HeaderInfo(ParameterInfo):
     actor = None
 
 
-def callInfoFromWSDL(self, port, name):
+def callInfoFromWSDL(port, name):
     logger = logging.getLogger(__name__)
     """Return a SOAPCallInfo given a WSDL port and operation name."""
     wsdl = port.getService().getWSDL()
