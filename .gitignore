@@ -12,3 +12,5 @@ build/
 /.idea/modules.xml
 /.cache
 /.eggs
+/ChangeLog
+/AUTHORS
