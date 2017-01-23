@@ -31,7 +31,7 @@ before_deploy:
 deploy:
 - provider: releases
   api_key:
-    secure: gr9iOcQjdoAyUAim6FWKzJI9MBaJo9XKfGQGu7wdPXUFhg80Rp6GLJsowP+aU94NjXM1UQlVHDAy627WtjBlLH2SvmVEIIr7+UKBopBYuXG5jJ1m3wOZE+4f1Pqe9bqFc1DxgucqE8qF0sC24fIbNM2ToeyYrxrS6RoL2gRrX2I=
+    secure: "lQGRZWqBuieHqjfgSimeWHZf4RDf2kwfOdeWcQtSSAVSW7THsnak3ugWYsLII05vjaRBKdrLoRr8rlHe64A1CDq/XPSlSt1EZeI5ejV8DO8AZdprkKpO83O5xVRDYB6a3pHrOfbw9dhBMPq3LapRwAoGRkKcgVeTdtDyIJDxy9A="
   file:
   - dist/$PACKAGE_NAME-$PACKAGE_VERSION*
   skip_cleanup: true
