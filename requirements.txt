@@ -1,2 +1,2 @@
-setuptools
+setuptools>=17.1
 six
