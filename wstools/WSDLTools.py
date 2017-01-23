@@ -431,7 +431,9 @@ class ImportElement(Element):
 
 
 class Types(Collection):
-    default = lambda self, k: k.targetNamespace
+
+    def default(self, k):
+        return k.targetNamespace
 
     def __init__(self, parent):
         Collection.__init__(self, parent)
@@ -1485,9 +1487,9 @@ def FindExtensions(object, kind, t_type=type(())):
         # result = []
         namespaceURI, name = kind
         return [item for item in object.extensions
-                if hasattr(item, 'nodeType')
-                and DOM.nsUriMatch(namespaceURI, item.namespaceURI)
-                and item.name == name]
+                if hasattr(item, 'nodeType') and
+                DOM.nsUriMatch(namespaceURI, item.namespaceURI) and
+                item.name == name]
     return [item for item in object.extensions if isinstance(item, kind)]
 
 

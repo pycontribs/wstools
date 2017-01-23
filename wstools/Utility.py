@@ -733,6 +733,7 @@ class DOM:
             file.close()
         return result
 
+
 DOM = DOM()
 
 
@@ -1226,7 +1227,8 @@ class ElementProxy(Base, MessageInterface):
 class Collection(UserDict):
 
     """Helper class for maintaining ordered named collections."""
-    default = lambda self, k: k.name
+    def default(self, k):
+        return k.name
 
     def __init__(self, parent, key=None):
         UserDict.__init__(self)
@@ -1260,7 +1262,8 @@ class CollectionNS(UserDict):
 
     """Helper class for maintaining ordered named collections."""
 
-    default = lambda self, k: k.name
+    def default(self, k):
+        return k.name
 
     def __init__(self, parent, key=None):
         UserDict.__init__(self)
@@ -1288,8 +1291,7 @@ class CollectionNS(UserDict):
         self.data[targetNamespace][key] = item
 
     def __isSequence(self, key):
-        return (isinstance(key, (tuple, list))
-                and len(key) == 2)
+        return (isinstance(key, (tuple, list)) and len(key) == 2)
 
     def keys(self):
         keys = []

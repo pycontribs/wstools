@@ -131,6 +131,7 @@ class WSRF_V1_2:
         # WSDL_LIST = (WSDL_DRAFT1, WSDL_DRAFT3)
         XSD_LIST = (XSD_DRAFT1, XSD_DRAFT3)
 
+
 WSRF = WSRF_V1_2
 WSRFLIST = (WSRF_V1_2,)
 
@@ -230,6 +231,7 @@ class _WSAW(str):
     """
     ADDRESS = property(lambda s: s)
 
+
 WSAW200605 = _WSAW("http://www.w3.org/2006/05/addressing/wsdl")
 
 WSAW_LIST = (WSAW200605,)
@@ -249,5 +251,6 @@ class GLOBUS:
     CORE = "http://www.globus.org/namespaces/2004/06/core"
     SIG = "http://www.globus.org/2002/04/xmlenc#gssapi-sign"
     TOKEN = "http://www.globus.org/ws/2004/09/security/sc#GSSAPI_GSI_TOKEN"
+
 
 ZSI_SCHEMA_URI = 'http://www.zolera.com/schemas/ZSI/'
