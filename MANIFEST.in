@@ -1,6 +1,0 @@
-include README.rst
-include CHANGES.txt
-include requirements.txt
-include requirements-dev.txt
-recursive-include docs *.*
-recursive-include wstools *.py
