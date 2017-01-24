@@ -26,17 +26,16 @@ notifications:
   email:
   - pycontribs@googlegroups.com
   - sorin.sbarnea@gmail.com
-before_deploy:
-- echo "before deploy..."
 deploy:
 - provider: releases
   api_key:
     secure: "lQGRZWqBuieHqjfgSimeWHZf4RDf2kwfOdeWcQtSSAVSW7THsnak3ugWYsLII05vjaRBKdrLoRr8rlHe64A1CDq/XPSlSt1EZeI5ejV8DO8AZdprkKpO83O5xVRDYB6a3pHrOfbw9dhBMPq3LapRwAoGRkKcgVeTdtDyIJDxy9A="
   file:
-  - dist/$PACKAGE_NAME-$PACKAGE_VERSION*
+  - dist/$PACKAGE_NAME-$PACKAGE_VERSION-py2.py3-none-any.whl
+  - dist/$PACKAGE_NAME-$PACKAGE_VERSION.tar.gz
   skip_cleanup: true
   on:
-    tags: false
+    tags: true
     python: 2.7
     condition: $TOXENV != docs
 - provider: pypi
@@ -45,6 +44,8 @@ deploy:
     secure: E0cjANF7SLBdYrsnWLK8X/xWznqkF0JrP/DVfDazPzUYH6ynFeneyofzNJQPLTLsqe1eKXhuUJ/Sbl+RHFB0ySo/j/7NfYd/9pm8hpUkGCvR09IwtvMLgWKp3k10NWab03o2GOkSJSrLvZofyZBGR40wwu2O9uXPCb2rvucCGbw=
   distributions: sdist bdist_wheel
   skip_cleanup: true
+  # Upload_docs command is deprecated. Use RTD instead.
+  skip_upload_docs: true
   on:
     tags: true
     python: 2.7
@@ -57,6 +58,8 @@ deploy:
     secure: E0cjANF7SLBdYrsnWLK8X/xWznqkF0JrP/DVfDazPzUYH6ynFeneyofzNJQPLTLsqe1eKXhuUJ/Sbl+RHFB0ySo/j/7NfYd/9pm8hpUkGCvR09IwtvMLgWKp3k10NWab03o2GOkSJSrLvZofyZBGR40wwu2O9uXPCb2rvucCGbw=
   distributions: sdist bdist_wheel
   skip_cleanup: true
+  # Upload_docs command is deprecated. Use RTD instead.
+  skip_upload_docs: true
   on:
     tags: false
     python: 2.7
