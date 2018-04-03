@@ -1,71 +1,55 @@
 language: python
+cache:
+- pip
 sudo: false
-matrix:
-  fast_finish: false
 os:
 - linux
-python:
-- '2.7'
-- '3.4'
-- '3.5'
-- '3.6'
+stages:
+- test
+- deploy
 install:
-- pip -q --log dist/pip.log install --upgrade pip setuptools tox-travis py wheel
-- python setup.py sdist bdist_wheel install
-- pip install ./dist/*.whl
-- pip --version
-script:
-- export PACKAGE_NAME=$(python setup.py --name)
-- export PACKAGE_VERSION=$(python setup.py --version)
-- python setup.py --version
-- tox --installpkg ./dist/*.whl --travis-after
-after_success:
-- coveralls
-  - bash <(curl -s https://codecov.io/bash)
-notifications:
-  email:
-  - pycontribs@googlegroups.com
-  - sorin.sbarnea@gmail.com
-deploy:
-- provider: releases
-  api_key:
-    secure: "lQGRZWqBuieHqjfgSimeWHZf4RDf2kwfOdeWcQtSSAVSW7THsnak3ugWYsLII05vjaRBKdrLoRr8rlHe64A1CDq/XPSlSt1EZeI5ejV8DO8AZdprkKpO83O5xVRDYB6a3pHrOfbw9dhBMPq3LapRwAoGRkKcgVeTdtDyIJDxy9A="
-  file:
-  - dist/$PACKAGE_NAME-$PACKAGE_VERSION-py2.py3-none-any.whl
-  - dist/$PACKAGE_NAME-$PACKAGE_VERSION.tar.gz
-  skip_cleanup: true
-  on:
-    tags: true
+- pip install -q tox-travis tox-pyenv virtualenv | cat
+jobs:
+  include:
+  - stage: test
+    script: python -m tox
     python: 2.7
-    condition: $TOXENV != docs
-- provider: pypi
-  user: sorin
-  password:
-    secure: E0cjANF7SLBdYrsnWLK8X/xWznqkF0JrP/DVfDazPzUYH6ynFeneyofzNJQPLTLsqe1eKXhuUJ/Sbl+RHFB0ySo/j/7NfYd/9pm8hpUkGCvR09IwtvMLgWKp3k10NWab03o2GOkSJSrLvZofyZBGR40wwu2O9uXPCb2rvucCGbw=
-  distributions: sdist bdist_wheel
-  skip_cleanup: true
-  # Upload_docs command is deprecated. Use RTD instead.
-  skip_upload_docs: true
-  on:
-    tags: true
-    python: 2.7
-    condition: $TOXENV != docs
-    branch: master
-- provider: pypi
-  server: https://testpypi.python.org/pypi
-  user: sorins
-  password:
-    secure: E0cjANF7SLBdYrsnWLK8X/xWznqkF0JrP/DVfDazPzUYH6ynFeneyofzNJQPLTLsqe1eKXhuUJ/Sbl+RHFB0ySo/j/7NfYd/9pm8hpUkGCvR09IwtvMLgWKp3k10NWab03o2GOkSJSrLvZofyZBGR40wwu2O9uXPCb2rvucCGbw=
-  distributions: sdist bdist_wheel
-  skip_cleanup: true
-  # Upload_docs command is deprecated. Use RTD instead.
-  skip_upload_docs: true
-  on:
-    tags: false
-    python: 2.7
-    condition: $TOXENV != docs
-    branch: develop
-env:
-  global:
-  - secure: fuXwQL+KHQ96XkAFl2uQc8eK8dAjrgkup46tck/UGjVpdv1PT/yHmBKrvpFjDa50ueGbtBwTdKAwhyAmYuiZCk2IYHzdvBylCZBBji2FSpaTM59CVwgkVT6tx3HHO83X0mEX6ih9TJvZD5XhX+YUjopnseRXRq3ey3JZJXWN4RM=
-  - secure: "pGQGM5YmHvOgaKihOyzb3k6bdqLQnZQ2OXO9QrfXlXwtop3zvZQi80Q+01l230x2psDWlwvqWTknAjAt1w463fYXPwpoSvKVCsLSSbjrf2l56nrDqnoir+n0CBy288+eIdaGEfzcxDiuULeKjlg08zrqjcjLjW0bDbBrlTXsb5U="
+    env: TOXENV=py27
+  - stage: test
+    script: python -m tox
+    python: 3.4
+    env: TOXENV=py34
+  - stage: test
+    script: python -m tox
+    python: 3.5
+    env: TOXENV=py35
+  - stage: test
+    script: python -m tox
+    python: 3.6
+    env: TOXENV=py36 PYTHON='3.6' PYENV_VERSION='system'
+  - stage: deploy
+    script:
+    - export PACKAGE_NAME=$(python setup.py --name)
+    - export PACKAGE_VERSION=$(python setup.py --version)
+    - python setup.py sdist bdist_wheel
+    deploy:
+    - provider: pypi
+      user: pycontribs
+      password:
+        secure: B7u10E5+HFXg4jRJFvHL1Z7mTMJfQh+BwKt22NdAnNm0K3xSj0E5h2C6vEHs97xG7vJ36Eh1Dc2W85miFaolJ6efg0DnGAzjBFUWKZhjufO6zXP3e86VpSS/pTNlfcXaswOP+hkVb0Q3zqwSK4dGLOAB8/OTbb8SBWjAndixDzw=
+      distributions: sdist bdist_wheel
+      skip_cleanup: true
+      on:
+        tags: true
+        repo: pycontribs/wstools
+    - provider: releases
+      api_key:
+        secure: L+4ubjx681BpztL704qBeUKSkfAVr+Ooia2EVMCCaCw4DtOWRdAwhc0P1vWfPfgrMEktEkkx/OHTa5Ha0sPCiosBeTD5AjNY7NChWCmtsTGLkv+RmNtK4QOwkKaMl7D8MQDMbTzF1TDVZ9lik7Ni+dXEOFfDquXU052aoYkvwlA=
+      file:
+      - dist/$PACKAGE_NAME-$PACKAGE_VERSION.tar.gz
+      - dist/$PACKAGE_NAME-$PACKAGE_VERSION-py2.py3-none-any.whl
+      - ChangeLog
+      skip_cleanup: true
+      on:
+        tags: true
+        repo: pycontribs/wstools
