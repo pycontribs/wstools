@@ -404,7 +404,7 @@ class Element:
                 return parent
             try:
                 parent = parent.parent()
-            except:
+            except Exception:
                 break
 
         return None
@@ -761,7 +761,7 @@ class MessageRole(Element):
                 return parent
             try:
                 parent = parent.parent()
-            except:
+            except Exception:
                 break
 
         return None

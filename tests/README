@@ -7,14 +7,14 @@ Add the -v option for more informative feedback.
 ADDING TESTS:
     1. For Stand-Alone tests add WSDL FILE to appropriate archive file
         Need to add a NEW Archive?:
-            config.txt [files] "archive" -- tuple of all archive files, 
-            if you need to create a new archive append the archive 
+            config.txt [files] "archive" -- tuple of all archive files,
+            if you need to create a new archive append the archive
             name to the 'archive' tuple.
 
     2. Edit config.txt section(s):
         option -- name by which service will be referenced in test case.
             Need an entry under appropriate section(s), this name
-            must be unique within each section it appears but it may 
+            must be unique within each section it appears but it may
             appear in multiple sections.
 
         config.txt "test" sections:

@@ -620,7 +620,7 @@ class XMLSchemaComponent(XMLBase, MarkerInterface):
             item = item._parent()
         try:
             tns = item.getTargetNamespace()
-        except:
+        except Exception:
             tns = ''
         path.append('<%s targetNamespace="%s">' % (item.tag, tns))
         path.reverse()

@@ -89,11 +89,11 @@ except ImportError:
 
 try:
     from exceptions import Exception
-except:
+except ImportError:
     pass
 try:
     from ZSI import _get_idstr
-except:
+except ImportError:
     def _get_idstr(pyobj):
         '''Python 2.3.x generates a FutureWarning for negative IDs, so
         we use a different prefix character to ensure uniqueness, and
@@ -114,7 +114,7 @@ DEFAULT = "".join
 
 try:
     from xml.dom.ext import SplitQName
-except:
+except Exception:
     def SplitQName(qname):
         '''SplitQName(qname) -> (string, string)
 
@@ -128,15 +128,15 @@ except:
                None -- (None, localName)
         '''
 
-        l = qname.split(':')
-        if len(l) == 1:
-            l.insert(0, None)
-        elif len(l) == 2:
-            if l[0] == 'xmlns':
-                l.reverse()
+        q = qname.split(':')
+        if len(q) == 1:
+            q.insert(0, None)
+        elif len(q) == 2:
+            if q[0] == 'xmlns':
+                q.reverse()
         else:
             return
-        return tuple(l)
+        return tuple(q)
 
 
 class NamespaceError(Exception):
@@ -1143,7 +1143,7 @@ class ElementProxy(Base, MessageInterface):
         if namespaceURI:
             try:
                 prefix = self.getPrefix(namespaceURI)
-            except:
+            except Exception:
                 declare = True
                 prefix = prefix or self._getUniquePrefix()
             if prefix:

@@ -14,7 +14,7 @@ try:
     from xml.ns import SOAP, SCHEMA, WSDL, XMLNS, DSIG, ENCRYPTION
     DSIG.C14N = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315"
 
-except:
+except Exception:
     class SOAP:
         ENV = "http://schemas.xmlsoap.org/soap/envelope/"
         ENC = "http://schemas.xmlsoap.org/soap/encoding/"

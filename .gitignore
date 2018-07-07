@@ -1,8 +1,12 @@
 dist
+*.egg
 *.egg-info
 *.pyc
-*.egg
-.tox
+.cache/
+.coverage
+.coverage.*
+.eggs/
+.tox/
 ~*.*
 build/
 .idea/
@@ -15,3 +19,4 @@ build/
 /ChangeLog
 /AUTHORS
 /.pytest_cache
+/node_modules

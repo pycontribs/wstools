@@ -14,9 +14,9 @@ soapi-dlw = data/soapi-1.63.0-dlw.wsdl
 soapi-re = data/soapi-1.63.0-re.wsdl
 
 ##########################################################################
-# SECTION  [services_by_http]  - 
+# SECTION  [services_by_http]  -
 ##########################################################################
-[services_by_http] 
+[services_by_http]
 
 # no schemas
 AbysalSendEmail  =  http://www.abysal.com/soap/AbysalEmail.wsdl
@@ -80,7 +80,7 @@ finnwords  =  http://www.nickhodge.com/nhodge/finnwords/finnwords.wsdl
 pop  =  http://www.cosme.nu/services/pop.php?wsdl
 
 
-#simple types 
+#simple types
 
 ABA  =  http://www.webservicex.net/aba.asmx?WSDL
 AmazonBox  =  http://www.xmlme.com/WSAmazonBox.asmx?WSDL
@@ -297,10 +297,10 @@ xmethods_gcd  =  http://samples.bowstreet.com/bowstreet5/webengine/xmethods/gcd/
 
 
 ##########################################################################
-# SECTION  [reader_errors]  - 
+# SECTION  [reader_errors]  -
 #      unable to load file
 ##########################################################################
-[reader_errors] 
+[reader_errors]
 
 BusinessFinder(UDDI)-WebService  =  http://www.esynaps.com/WebServices/BusinessList.asmx?WSDL
 ColdFusionTip-of-the-Day  =  http://www.forta.com/cf/tips/syndicate.cfc?wsdl
