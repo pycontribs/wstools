@@ -1,4 +1,4 @@
-all: clean flake8 test pypi docs tag release
+all: clean lint test pypi docs tag release
 .PHONY: all docs
 
 PACKAGE_NAME=$(shell python setup.py --name)
@@ -41,9 +41,8 @@ prepare: venv
 testspace:
 	${HOME}/testspace/testspace publish build/results.xml
 
-flake8:
-	$(PYENV_HOME)/bin/python -m flake8
-	$(PYENV_HOME)/bin/python -m flake8 --install-hook 2>/dev/null || true
+lint:
+	$(PYENV_HOME)/bin/python -m pre_commit run -activate
 
 test: prepare flake8
 	$(PYENV_HOME)/bin/python setup.py test

@@ -17,6 +17,10 @@ jobs:
     - stage: test
       script: python -m tox
       python: "2.7"
+      env: TOXENV=lint
+    - stage: test
+      script: python -m tox
+      python: "2.7"
       env: TOXENV=py27
     - stage: test
       script: python -m tox
