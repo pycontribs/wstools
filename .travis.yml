@@ -24,12 +24,6 @@ jobs:
       env: TOXENV=py27
     - stage: test
       script: python -m tox
-      python: "3.4"
-      env: TOXENV=py34
-      after_success:
-        - bash <(curl -s https://codecov.io/bash) -e TOX_ENV
-    - stage: test
-      script: python -m tox
       python: "3.5"
       env: TOXENV=py35
       after_success:

@@ -32,10 +32,9 @@ $(PYENV_HOME)/bin/activate: requirements*.txt
 
 prepare: venv
 	pyenv install -s 2.7.13
-	pyenv install -s 3.4.5
 	pyenv install -s 3.5.2
 	pyenv install -s 3.6.0
-	pyenv local 2.7.13 3.4.5 3.5.2 3.6.0
+	pyenv local 2.7.13 3.5.2 3.6.0
 	@echo "INFO:	=== Prearing to run for package:$(PACKAGE_NAME) platform:$(PLATFORM) py:$(PYTHON_VERSION) dir:$(DIR) ==="
 
 testspace:
