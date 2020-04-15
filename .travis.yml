@@ -5,6 +5,7 @@ cache:
   - directories:
       - "node_modules"
       - $HOME/.cache
+dist: xenial
 os:
   - linux
 stages:
@@ -41,7 +42,6 @@ jobs:
       after_success:
         - bash <(curl -s https://codecov.io/bash) -e TOX_ENV
       # begin: workaround to enable support for py37:
-      sudo: required
       dist: xenial
       # end
     - stage: deploy
@@ -49,24 +49,24 @@ jobs:
         - export PACKAGE_NAME=$(python setup.py --name)
         - export PACKAGE_VERSION=$(python setup.py --version)
         - python setup.py sdist bdist_wheel
-  deploy:
-    - provider: pypi
-      user: pycontribs
-      password:
-        secure: B7u10E5+HFXg4jRJFvHL1Z7mTMJfQh+BwKt22NdAnNm0K3xSj0E5h2C6vEHs97xG7vJ36Eh1Dc2W85miFaolJ6efg0DnGAzjBFUWKZhjufO6zXP3e86VpSS/pTNlfcXaswOP+hkVb0Q3zqwSK4dGLOAB8/OTbb8SBWjAndixDzw=  # yamllint disable-line
-      distributions: sdist bdist_wheel
-      skip_cleanup: true
-      on:
-        tags: true
-        repo: pycontribs/wstools
-    - provider: releases
-      api_key:
-        secure: L+4ubjx681BpztL704qBeUKSkfAVr+Ooia2EVMCCaCw4DtOWRdAwhc0P1vWfPfgrMEktEkkx/OHTa5Ha0sPCiosBeTD5AjNY7NChWCmtsTGLkv+RmNtK4QOwkKaMl7D8MQDMbTzF1TDVZ9lik7Ni+dXEOFfDquXU052aoYkvwlA=  # yamllint disable-line
-      file:
-        - dist/$PACKAGE_NAME-$PACKAGE_VERSION.tar.gz
-        - dist/$PACKAGE_NAME-$PACKAGE_VERSION-py2.py3-none-any.whl
-        - ChangeLog
-      skip_cleanup: true
-      on:
-        tags: true
-        repo: pycontribs/wstools
+deploy:
+  - provider: pypi
+    user: pycontribs
+    password:
+      secure: B7u10E5+HFXg4jRJFvHL1Z7mTMJfQh+BwKt22NdAnNm0K3xSj0E5h2C6vEHs97xG7vJ36Eh1Dc2W85miFaolJ6efg0DnGAzjBFUWKZhjufO6zXP3e86VpSS/pTNlfcXaswOP+hkVb0Q3zqwSK4dGLOAB8/OTbb8SBWjAndixDzw=  # yamllint disable-line
+    distributions: sdist bdist_wheel
+    skip_cleanup: true
+    on:
+      tags: true
+      repo: pycontribs/wstools
+  - provider: releases
+    api_key:
+      secure: L+4ubjx681BpztL704qBeUKSkfAVr+Ooia2EVMCCaCw4DtOWRdAwhc0P1vWfPfgrMEktEkkx/OHTa5Ha0sPCiosBeTD5AjNY7NChWCmtsTGLkv+RmNtK4QOwkKaMl7D8MQDMbTzF1TDVZ9lik7Ni+dXEOFfDquXU052aoYkvwlA=  # yamllint disable-line
+    file:
+      - dist/$PACKAGE_NAME-$PACKAGE_VERSION.tar.gz
+      - dist/$PACKAGE_NAME-$PACKAGE_VERSION-py2.py3-none-any.whl
+      - ChangeLog
+    skip_cleanup: true
+    on:
+      tags: true
+      repo: pycontribs/wstools
