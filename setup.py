@@ -30,6 +30,7 @@ class PyTest(TestCommand):
 
 setuptools.setup(
     setup_requires=['pbr>=1.10', 'setuptools>=17.1', 'pytest-runner'],
+    install_requires=['six'],
     pbr=True,
     cmdclass={'test': PyTest},
     test_suite='tests')
