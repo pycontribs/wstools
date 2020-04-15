@@ -16,17 +16,14 @@ WSDL parsing services package for Web Services for Python
 
 ------------
 
-.. image:: https://api.travis-ci.org/pycontribs/wstools.svg?branch=develop
-        :target: https://travis-ci.org/pycontribs/wstools
+.. image:: https://api.travis-ci.com/pycontribs/wstools.svg?branch=master
+        :target: https://travis-ci.com/pycontribs/wstools
 
 .. image:: https://img.shields.io/pypi/status/wstools.svg
         :target: https://pypi.python.org/pypi/wstools/
 
 .. image:: https://img.shields.io/coveralls/pycontribs/wstools.svg
         :target: https://coveralls.io/r/pycontribs/wstools
-
-.. image:: http://api.flattr.com/button/flattr-badge-large.png
-        :target: https://flattr.com/submit/auto?user_id=sbarnea&url=https://github.com/pycontribs/wstools&title=Python wstools&language=&tags=github&category=software
 
 
 General
