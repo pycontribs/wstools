@@ -51,9 +51,6 @@ jobs:
         - python setup.py sdist bdist_wheel
 deploy:
   - provider: pypi
-    username: pycontribs
-    password:
-      secure: B7u10E5+HFXg4jRJFvHL1Z7mTMJfQh+BwKt22NdAnNm0K3xSj0E5h2C6vEHs97xG7vJ36Eh1Dc2W85miFaolJ6efg0DnGAzjBFUWKZhjufO6zXP3e86VpSS/pTNlfcXaswOP+hkVb0Q3zqwSK4dGLOAB8/OTbb8SBWjAndixDzw=  # yamllint disable-line
     distributions: sdist bdist_wheel
     cleanup: false
     on:
